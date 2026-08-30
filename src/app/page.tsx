@@ -2002,7 +2002,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-
+          
           {/* Profile 4 */}
           <div className="flex items-center gap-6">
             <div className="w-24 h-24 rounded-full overflow-hidden border border-border-pill shadow-sm shrink-0 bg-white">
