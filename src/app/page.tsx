@@ -1788,11 +1788,7 @@ export default function LandingPage() {
 <div className="w-full bg-white py-24 flex flex-col items-center justify-center border-t border-border-divider">
         <div className="text-center mb-16">
           <h2
-            className="text-[32px] md:text-[40px] text-ink font-medium tracking-tight mb-4"
-            style={{
-              fontFamily: "var(--font-geist-pixel-grid, monospace)",
-              fontWeight: "bold",
-            }}
+            className="text-[40px] md:text-[48px] text-ink font-medium tracking-tight mb-4"
           >
             Meet the Devs
           </h2>
@@ -1812,10 +1808,10 @@ export default function LandingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1">
+              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1 whitespace-nowrap">
                 Aniruddha Das
               </h3>
-              <p className="text-[13px] text-ink-muted mb-3">
+              <p className="text-[13px] text-ink-muted mb-3 whitespace-nowrap">
                 Full Stack Developer
               </p>
               <div className="flex items-center gap-3 text-ink-muted">
@@ -1879,10 +1875,10 @@ export default function LandingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1">
+              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1 whitespace-nowrap">
                 Sattwik Das
               </h3>
-              <p className="text-[13px] text-ink-muted mb-3">
+              <p className="text-[13px] text-ink-muted mb-3 whitespace-nowrap">
                 Full Stack Developer
               </p>
               <div className="flex items-center gap-3 text-ink-muted">
@@ -1946,10 +1942,10 @@ export default function LandingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1">
+              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1 whitespace-nowrap">
                 Souradeep Pradhan
               </h3>
-              <p className="text-[13px] text-ink-muted mb-3">
+              <p className="text-[13px] text-ink-muted mb-3 whitespace-nowrap">
                 Full Stack Developer
               </p>
               <div className="flex items-center gap-3 text-ink-muted">
@@ -2013,10 +2009,10 @@ export default function LandingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1">
+              <h3 className="text-[18px] text-ink font-medium tracking-tight mb-1 whitespace-nowrap">
                 Sampurna Chandra
               </h3>
-              <p className="text-[13px] text-ink-muted mb-3">
+              <p className="text-[13px] text-ink-muted mb-3 whitespace-nowrap">
                 Full Stack Developer
               </p>
               <div className="flex items-center gap-3 text-ink-muted">
