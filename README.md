@@ -1,11 +1,4 @@
 <div align="center">
-  <img src="./repo/adamas.png" height="100" style="margin: 0 15px;" align="absmiddle" />
-  <img src="./repo/gamelimals.png" height="130" style="margin: 0 15px;" align="absmiddle" />
-  <img src="./repo/cycoders.png" height="100" style="margin: 0 15px;" align="absmiddle" />
-
-  <br />
-  <br />
-
   <img src="./repo/banner.png" alt="Checkpost Banner" width="100%" />
   
   <br />
@@ -161,6 +154,7 @@ Checkpost provides enterprises with a real-time financial control layer purpose-
 | <img src="./public/teams/souradeeppradhan.png" width="60" style="border-radius: 50%; aspect-ratio: 1/1; object-fit: cover;" /> | **Souradeep Pradhan** | Full Stack Developer |
 | <img src="./public/teams/anirudhhadas.png" width="60" style="border-radius: 50%; aspect-ratio: 1/1; object-fit: cover;" /> | **Aniruddha Das** | Full Stack Developer |
 | <img src="./public/teams/sattwikdas.png" width="60" style="border-radius: 50%; aspect-ratio: 1/1; object-fit: cover;" /> | **Sattwik Das** | Full Stack Developer |
+| <img src="./public/teams/sampurnachandra.png" width="60" style="border-radius: 50%; aspect-ratio: 1/1; object-fit: cover;" /> | **Sampurna Chandra** | Full Stack Developer |
 
 ---
 
