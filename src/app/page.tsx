@@ -1757,7 +1757,7 @@ export default function LandingPage() {
               </a>
               <a
                 className="text-white border border-white/30 hover:bg-white/10 inline-flex items-center justify-center gap-[10px] px-[20px] py-[12px] rounded-[8px] text-[15px] font-[500] transition-all cursor-pointer no-underline"
-                href="https://github.com/pradhan-not-found/vibeforge-project"
+                href="https://github.com/pradhan-not-found/Checkpost"
                 target="_blank"
                 rel="noopener noreferrer"
               >

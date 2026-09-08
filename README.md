@@ -9,7 +9,7 @@
   <p><strong>A modern, enterprise-grade AI security and monitoring dashboard.</strong></p>
 </div>
 
-**Checkpost** (repository: `vibeforge`) provides a comprehensive suite of tools for managing AI agents, testing Large Language Models (LLMs), and enforcing robust security policies—all wrapped in a stunning, highly responsive user interface.
+**Checkpost** provides a comprehensive suite of tools for managing AI agents, testing Large Language Models (LLMs), and enforcing robust security policies—all wrapped in a stunning, highly responsive user interface.
 
 ---
 

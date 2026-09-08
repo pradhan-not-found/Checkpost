@@ -465,7 +465,7 @@ export default function Page() {
                 <div className="text-center space-y-2 w-full">
                   <h3 className="text-xl font-bold text-[var(--app-ink)] tracking-tight">Deployment Active</h3>
                   <p className="text-sm text-[var(--app-muted)] leading-relaxed">
-                    Your agent has been securely registered with the Vibeforge firewall proxy and is ready to process traffic.
+                    Your agent has been securely registered with the Checkpost firewall proxy and is ready to process traffic.
                   </p>
                 </div>
                 
