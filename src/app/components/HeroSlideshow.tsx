@@ -88,20 +88,21 @@ export default function HeroSlideshow({ onSlideChange }: HeroSlideshowProps = {}
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const next = (prev + 1) % slides.length;
-        if (onSlideChangeRef.current) onSlideChangeRef.current(next);
-        return next;
-      });
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (onSlideChangeRef.current) {
+      onSlideChangeRef.current(currentSlide);
+    }
+  }, [currentSlide]);
 
   const slide = slides[currentSlide];
 
   const handleDotClick = (i: number) => {
     setCurrentSlide(i);
-    if (onSlideChangeRef.current) onSlideChangeRef.current(i);
   };
 
   return (
@@ -152,7 +153,7 @@ export default function HeroSlideshow({ onSlideChange }: HeroSlideshowProps = {}
           <div className="px-5 py-4 border-b border-black/5 flex items-center justify-between">
             <div className="flex items-center gap-2">
                <div className="w-[22px] h-[22px] rounded-[5px] bg-white flex items-center justify-center shadow-sm border border-black/10 overflow-hidden p-0.5">
-                 <img src="/icon.png" alt="Checkpost" className="w-full h-full object-contain" />
+                 <img src="/checkpost-icon.png" alt="Checkpost" className="w-full h-full object-contain" />
                </div>
                <div 
                  className="text-[15px] text-black/80 mt-0.5"
@@ -161,10 +162,6 @@ export default function HeroSlideshow({ onSlideChange }: HeroSlideshowProps = {}
                  Checkpost
                </div>
             </div>
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
           </div>
 
           <div className="flex-1 p-5 flex flex-col overflow-hidden">
