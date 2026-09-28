@@ -128,7 +128,8 @@ export default function LandingPage() {
         `}} />
         <NavbarScrollEffect />
         <div className="w-full max-w-[1440px] mx-auto px-[16px] sm:px-[20px] min-[476px]:px-[32px] md:px-[20px] py-[16px] flex items-center justify-between gap-2">
-          <a className="shrink-0 flex items-center" aria-label="Home" href="/">
+          <a className="shrink-0 flex items-center gap-2.5" aria-label="Home" href="/">
+            <img src="/checkpost-icon.png" alt="Checkpost Logo" className="w-8 h-8 object-contain" />
             <span
               className="text-inherit text-2xl sm:text-3xl md:text-4xl transition-colors duration-300"
               style={{

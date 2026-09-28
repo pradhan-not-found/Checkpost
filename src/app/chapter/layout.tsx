@@ -181,7 +181,8 @@ export default function ChapterLayout({ children }: { children: React.ReactNode 
       >
         <div className="w-full max-w-[1440px] mx-auto px-[20px] min-[476px]:px-[32px] md:px-[20px] py-[18px] min-[1000px]:py-0 min-[1000px]:pt-[26px] min-[1000px]:pb-[23px] flex items-center justify-between">
           {/* Logo */}
-          <Link className="shrink-0 flex items-center" aria-label="Home" href="/">
+          <Link className="shrink-0 flex items-center gap-2.5" aria-label="Home" href="/">
+            <img src="/checkpost-icon.png" alt="Checkpost Logo" className="w-7 h-7 object-contain" />
             <span
               className="text-black transition-colors duration-300"
               style={{

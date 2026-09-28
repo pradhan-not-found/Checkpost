@@ -542,6 +542,9 @@ export default function Page() {
 
             {newAgentDetails ? (
               <div className="p-6 space-y-5 flex flex-col items-center">
+                <div className="w-16 h-16 bg-[var(--app-soft)] rounded-2xl shadow-sm border border-[var(--app-hairline)] flex items-center justify-center p-2 mb-2">
+                  <img src="/checkpost-icon.png" alt="Checkpost Logo" className="w-full h-full object-contain" />
+                </div>
                 <div className="text-center space-y-1 w-full">
                   <h3 className="text-lg font-bold text-[var(--app-ink)] tracking-tight">
                     {newAgentDetails.isNew ? 'Deployment Active' : 'Active Configuration'}
