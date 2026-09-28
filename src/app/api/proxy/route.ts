@@ -37,32 +37,7 @@ export async function POST(req: Request) {
     const policyId = agent.policyId || 'default';
     const policy = db.policyProfiles?.[policyId] || db.policyProfiles?.['default'] || { maxTokens: 100000, maxSpend: 50 };
 
-    // 1. BLAST RADIUS CHECK
-    if (agent.totalSpend >= policy.maxSpend || agent.totalTokens >= policy.maxTokens) {
-      const reason = agent.totalSpend >= policy.maxSpend ? 'Max Spend Exceeded' : 'Max Tokens Exceeded';
-      
-      // Add to Approval Queue
-      const queueItem = {
-        id: crypto.randomUUID(),
-        agentId,
-        agentName: agent.name,
-        action: 'execute_prompt',
-        policy: reason,
-        time: new Date().toISOString(),
-        prompt
-      };
-      
-      db.queue.unshift(queueItem); // Add to front
-      await saveDb(db);
-      await incrementAgentBlocked(agentId);
-
-      return NextResponse.json({ 
-        status: 'blocked', 
-        error: `Agent blocked by Blast Radius Firewall. Policy triggered: ${reason}` 
-      }, { status: 403 });
-    }
-
-    // 2. FIREWALL RULES CHECK
+    // 1. FIREWALL RULES CHECK (Security First)
     let blockedReason = null;
     if (policy.rules && Array.isArray(policy.rules)) {
       const promptLower = prompt.toLowerCase();
@@ -99,6 +74,35 @@ export async function POST(req: Request) {
       return NextResponse.json({ 
         status: 'blocked', 
         error: `Agent blocked by Checkpost Firewall. Policy triggered: ${blockedReason}` 
+      }, { status: 403 });
+    }
+
+    // 2. BLAST RADIUS CHECK (Quota limits)
+    const currentSpend = agent.totalSpend || 0;
+    const currentTokens = agent.totalTokens || 0;
+    const maxSpend = policy.maxSpend || 50;
+    const maxTokens = policy.maxTokens || 100000;
+
+    if ((maxSpend > 0 && currentSpend >= maxSpend) || (maxTokens > 0 && currentTokens >= maxTokens)) {
+      const reason = (maxSpend > 0 && currentSpend >= maxSpend) ? 'Max Spend Exceeded' : 'Max Tokens Exceeded';
+      
+      const queueItem = {
+        id: crypto.randomUUID(),
+        agentId,
+        agentName: agent.name,
+        action: 'execute_prompt',
+        policy: reason,
+        time: new Date().toISOString(),
+        prompt
+      };
+      
+      db.queue.unshift(queueItem);
+      await saveDb(db);
+      await incrementAgentBlocked(agentId);
+
+      return NextResponse.json({ 
+        status: 'blocked', 
+        error: `Agent blocked by Blast Radius Firewall. Policy triggered: ${reason}` 
       }, { status: 403 });
     }
 
