@@ -324,22 +324,21 @@ export default function PoliciesPage() {
                     )}
                     {pAgents.length === 0 && <span className="text-xs text-[var(--app-muted)]">None</span>}
 
-                    {/* Dark Hover Card Tooltip */}
+                    {/* Minimal Hover Card */}
                     {pAgents.length > 0 && (
-                      <div className="absolute bottom-[110%] right-0 w-48 bg-[var(--app-ink)] text-[var(--app-canvas)] rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-xl pointer-events-none p-3 flex flex-col gap-2">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-canvas)]/60 mb-0.5">Assigned ({pAgents.length})</div>
+                      <div className="absolute bottom-[calc(100%+8px)] right-0 w-max min-w-[140px] bg-[var(--app-canvas)] border border-[var(--app-hairline)] rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-[0_8px_30px_rgb(0,0,0,0.08)] pointer-events-none p-1.5 flex flex-col">
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--app-muted)] mb-1 px-2 pt-1">Assigned Agents</div>
                         {pAgents.map(a => {
                           const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
                           return (
-                            <div key={a.id} className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded bg-white flex items-center justify-center overflow-hidden shrink-0">
-                                <img src={logoUrl} alt={a.name} className="w-full h-full object-contain p-0.5" />
+                            <div key={a.id} className="flex items-center gap-2.5 p-1.5 rounded-lg transition-colors">
+                              <div className="w-5 h-5 rounded border border-[var(--app-hairline)] bg-white flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                <img src={logoUrl} alt={a.name} className="w-3.5 h-3.5 object-contain" />
                               </div>
-                              <span className="text-xs font-medium truncate text-[var(--app-canvas)]">{a.name}</span>
+                              <span className="text-xs font-semibold text-[var(--app-ink)] pr-2">{a.name}</span>
                             </div>
                           );
                         })}
-                        <div className="absolute top-full right-3 border-[6px] border-transparent border-t-[var(--app-ink)]" />
                       </div>
                     )}
                   </div>
