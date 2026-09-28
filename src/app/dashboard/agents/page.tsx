@@ -485,19 +485,31 @@ export default function Page() {
                 <h3 className="text-base font-semibold text-[var(--app-ink)] tracking-tight leading-snug">{agent.name}</h3>
                 <p className="text-xs text-[var(--app-muted)] font-medium mt-0.5 mb-4">{agent.provider}</p>
 
-                <div className="mb-5 flex items-center gap-4 bg-[var(--app-canvas)] p-3 rounded-xl border border-[var(--app-hairline)] shadow-sm">
-                  <div className="relative w-11 h-11 flex items-center justify-center shrink-0">
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="flex flex-col overflow-hidden">
+                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider mb-1">Token Budget</span>
+                    <div className="flex items-baseline gap-1 truncate">
+                      <span className="text-sm font-semibold text-[var(--app-ink)]">
+                        {agent.tokensUsed.toLocaleString()}
+                      </span>
+                      <span className="text-xs text-[var(--app-muted)]">
+                        / {agent.maxTokens.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
                     <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                       <path
-                        className="text-[var(--app-soft)] stroke-current"
-                        strokeWidth="3.5"
+                        className="text-[var(--app-hairline)] stroke-current"
+                        strokeWidth="4"
                         fill="none"
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       />
                       <path
-                        className={`${agent.status === 'Compromised' ? 'text-red-500' : 'text-[var(--app-ink)]'} stroke-current`}
+                        className={`${agent.status === 'Compromised' ? 'text-red-500' : 'text-[var(--app-ink)]'} stroke-current transition-all duration-500`}
                         strokeDasharray={`${Math.max(0.1, agent.progress)}, 100`}
-                        strokeWidth="3.5"
+                        strokeWidth="4"
                         strokeLinecap="round"
                         fill="none"
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -506,12 +518,6 @@ export default function Page() {
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className="text-[9px] font-bold text-[var(--app-ink)]">{Math.round(agent.progress)}%</span>
                     </div>
-                  </div>
-                  <div className="flex flex-col overflow-hidden">
-                    <span className="text-[10px] text-[var(--app-muted)] font-bold uppercase tracking-wider mb-0.5">Token Quota</span>
-                    <span className="text-xs text-[var(--app-ink)] font-semibold truncate">
-                      {agent.tokensUsed >= agent.maxTokens ? 'Quota Exhausted' : `${agent.tokensUsed.toLocaleString()} / ${agent.maxTokens.toLocaleString()}`}
-                    </span>
                   </div>
                 </div>
 
