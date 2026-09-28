@@ -111,11 +111,7 @@ export async function POST(req: Request) {
             totalTokens = chatCompletion.usage?.total_tokens || 0;
             cost = (totalTokens / 1000000) * 0.05;
           } else {
-            throw new Error(
-              'Your Google Gemini free-tier quota is exhausted (limit: 0). ' +
-              'To continue: go to console.groq.com → get a free API key → add it in Settings → Provider Keys → Groq. ' +
-              'Checkpost will automatically use Groq as a fallback.'
-            );
+            throw new Error('Google Gemini free-tier quota exhausted. Please check your API plan or try again later.');
           }
         } else {
           text = response.text();
