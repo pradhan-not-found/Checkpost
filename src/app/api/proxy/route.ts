@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     let agent = db.agents[actualAgentId];
 
     if (!agent && token) {
-      const foundEntry = Object.entries(db.agents).find(([id, a]: [string, any]) => a.apiKey === token);
+      const foundEntry = Object.entries(db.agents).find(([id, a]: [string, any]) => a.proxy_api_key === token);
       if (foundEntry) {
         actualAgentId = foundEntry[0];
         agent = foundEntry[1];
