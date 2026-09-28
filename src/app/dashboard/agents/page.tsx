@@ -497,10 +497,10 @@ export default function Page() {
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-mono text-[var(--app-muted)] uppercase tracking-wider truncate max-w-[120px]" title={agent.id}>{agent.id}</span>
                   
-                  <div className="group relative flex items-center justify-center">
-                    <div className="w-4 h-4 cursor-help">
+                  <div className="group relative flex items-center justify-center cursor-pointer">
+                    <div className="w-6 h-6">
                       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="15.9155" className="text-[var(--app-hairline)] stroke-current" strokeWidth="4" fill="none" />
+                        <circle cx="18" cy="18" r="15.9155" className="text-black/10 stroke-current" strokeWidth="4" fill="none" />
                         <circle
                           cx="18" cy="18" r="15.9155"
                           className={`${agent.status === 'Compromised' ? 'text-red-500' : 'text-emerald-500'} stroke-current transition-all duration-700`}
@@ -509,10 +509,10 @@ export default function Page() {
                         />
                       </svg>
                     </div>
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-max px-2.5 py-1.5 bg-[var(--app-ink)] text-[var(--app-canvas)] rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 shadow-lg pointer-events-none flex flex-col items-center">
-                      <span className="text-[var(--app-canvas)]/70 uppercase text-[8px] font-bold tracking-wider mb-0.5">Token Quota</span>
-                      <span className="text-[10px] font-bold">{agent.tokensUsed.toLocaleString()} / {agent.maxTokens.toLocaleString()}</span>
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-[4px] border-transparent border-t-[var(--app-ink)]" />
+                    <div className="absolute bottom-[130%] left-1/2 -translate-x-1/2 w-max px-3 py-2 bg-[var(--app-ink)] text-[var(--app-canvas)] rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-xl pointer-events-none flex flex-col items-center">
+                      <span className="text-[var(--app-canvas)]/70 uppercase text-[9px] font-bold tracking-widest mb-1">Token Quota</span>
+                      <span className="text-[11px] font-bold">{agent.tokensUsed.toLocaleString()} / {agent.maxTokens.toLocaleString()}</span>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-[var(--app-ink)]" />
                     </div>
                   </div>
                 </div>
