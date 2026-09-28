@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       provider_api_key: provider_api_key || '',
       totalTokens: 0,
       totalSpend: 0,
+      totalCalls: 0,
       blockedCount: 0,
       proxy_api_key,
     };

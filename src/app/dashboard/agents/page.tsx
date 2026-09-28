@@ -251,6 +251,7 @@ export default function Page() {
         provider_api_key: providerApiKey || '',
         totalTokens: 0,
         totalSpend: 0,
+        totalCalls: 0,
         blockedCount: 0,
         proxy_api_key,
       };
