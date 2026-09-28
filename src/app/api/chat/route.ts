@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     if (!apiKey) return new Response('Missing Gemini API Key in your Settings', { status: 400 });
     
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
