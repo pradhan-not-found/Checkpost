@@ -224,7 +224,7 @@ export default function Page() {
                 
                 {/* Node 1: User Request */}
                 <div className="relative z-10 flex flex-col items-center gap-2 w-[120px]">
-                  <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center group transition-transform hover:-translate-y-1 bg-white/70 dark:bg-black/60 backdrop-blur-xl border border-[var(--app-hairline)] shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] dark:border-white/10">
+                  <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center group transition-transform hover:-translate-y-1 bg-white/70 backdrop-blur-xl border border-[var(--app-hairline)] shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
                     <Server className="w-8 h-8 text-[var(--app-ink)] drop-shadow-sm" />
                     {/* Output port */}
                     <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-[1.5px] border-[var(--app-canvas)] bg-gray-400"></div>
@@ -242,7 +242,7 @@ export default function Page() {
 
                 {/* Node 2: Firewall Check */}
                 <div className="relative z-10 flex flex-col items-center gap-2 w-[120px]">
-                  <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center group transition-transform hover:-translate-y-1 bg-white/70 dark:bg-black/60 backdrop-blur-xl border border-[var(--app-hairline)] shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] dark:border-white/10">
+                  <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center group transition-transform hover:-translate-y-1 bg-white/70 backdrop-blur-xl border border-[var(--app-hairline)] shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
                     {/* Input port */}
                     <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-[1.5px] border-[var(--app-canvas)] bg-gray-400"></div>
                     <ShieldAlert className="w-8 h-8 text-[var(--app-ink)] drop-shadow-sm" />
@@ -262,14 +262,14 @@ export default function Page() {
 
                 {/* Node 3: Agent */}
                 <div className="relative z-10 flex flex-col items-center gap-2 w-[120px]">
-                  <div className={`relative w-16 h-16 rounded-2xl flex items-center justify-center group transition-transform hover:-translate-y-1 backdrop-blur-xl ${selectedTrace.success ? 'bg-white/70 dark:bg-black/60 border border-[var(--app-hairline)] shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] dark:border-white/10' : 'bg-red-500/10 dark:bg-red-950/80 border-2 border-red-500/50 shadow-[0_8px_30px_rgba(239,68,68,0.25)]'}`}>
+                  <div className={`relative w-16 h-16 rounded-2xl flex items-center justify-center group transition-transform hover:-translate-y-1 backdrop-blur-xl ${selectedTrace.success ? 'bg-white/70 border border-[var(--app-hairline)] shadow-[0_8px_30px_rgb(0,0,0,0.08)]' : 'bg-red-50 border-2 border-red-500/30 shadow-[0_8px_30px_rgba(239,68,68,0.15)]'}`}>
                     {/* Input port */}
                     <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-[1.5px] border-[var(--app-canvas)] bg-gray-400"></div>
                     
                     <img 
                       src={selectedTrace.logo} 
                       alt="Agent" 
-                      className={`w-8 h-8 object-contain drop-shadow-sm ${selectedTrace.success ? 'dark:filter dark:invert dark:brightness-0' : 'drop-shadow-[0_0_12px_rgba(239,68,68,0.8)]'}`} 
+                      className={`w-8 h-8 object-contain drop-shadow-sm ${selectedTrace.success ? '' : 'drop-shadow-[0_0_12px_rgba(239,68,68,0.4)] opacity-90'}`} 
                     />
                     
                     {/* Status Indicator (replacing output port) */}
