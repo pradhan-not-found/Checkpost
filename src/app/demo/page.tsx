@@ -60,11 +60,15 @@ export default function DemoClientApp() {
         throw new Error(data.error || 'Failed to connect to proxy');
       }
 
-      setMessages(prev => [...prev, { role: 'bot', content: data.response || data.text || JSON.stringify(data) }]);
+      setMessages(prev => [...prev, { role: 'bot', content: data.result || data.response || data.text || JSON.stringify(data) }]);
     } catch (err: any) {
+      // Clean up the error message by removing redundant text if present from the proxy
+      let cleanMessage = err.message.replace('Agent blocked by Checkpost Firewall. Policy triggered: ', '')
+                                    .replace('Agent blocked by Blast Radius Firewall. Policy triggered: ', '');
+      
       setMessages(prev => [...prev, { 
         role: 'bot', 
-        content: `🚨 Blocked by Checkpost Firewall: ${err.message}.` 
+        content: `🚨 Checkpost Firewall Interception:\n\n${cleanMessage}` 
       }]);
     } finally {
       setIsLoading(false);
