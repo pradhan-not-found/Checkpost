@@ -99,13 +99,15 @@ type Agent = {
   calls: string;
   risk: string;
   progress: number;
+  tokensUsed: number;
+  maxTokens: number;
   proxy_api_key?: string;
 };
 
 function statusStyles(status: string) {
   if (status === 'Active') return 'bg-emerald-50 text-emerald-700 ring-emerald-600/20';
   if (status === 'Warning') return 'bg-amber-50 text-amber-700 ring-amber-600/20';
-  if (status === 'Compromised') return 'bg-red-50 text-red-700 ring-red-600/20';
+  if (status === 'Compromised' || status === 'Rate Limited' || status === 'Provider Quota') return 'bg-red-50 text-red-700 ring-red-600/20';
   return 'bg-[var(--app-soft)] text-[var(--app-muted)] ring-[var(--app-hairline)]';
 }
 
@@ -174,6 +176,15 @@ export default function Page() {
           let status = 'Active';
           if (info.blockedCount > 0) status = 'Warning';
           if (progress >= 100) status = 'Compromised';
+          
+          if (agentTraces.length > 0 && !agentTraces[0].success) {
+            const errCtx = agentTraces[0].errorContext?.toLowerCase() || '';
+            if (errCtx.includes('429') || errCtx.includes('too many')) {
+              status = 'Rate Limited';
+            } else if (errCtx.includes('quota')) {
+              status = 'Provider Quota';
+            }
+          }
 
           return {
             id,

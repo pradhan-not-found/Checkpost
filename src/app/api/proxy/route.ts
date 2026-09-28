@@ -176,17 +176,6 @@ export async function POST(req: Request) {
       success = false;
       errorContext = err.message || 'Unknown LLM Error';
       console.error('LLM Error:', err);
-
-      // If the underlying provider reports a quota exhaustion, sync the local agent's budget to match.
-      if (errorContext.toLowerCase().includes('quota') || errorContext.includes('429')) {
-        const syncDb = await getDb();
-        if (syncDb.agents[agentId]) {
-           const pId = syncDb.agents[agentId].policyId || 'default';
-           const pol = syncDb.policyProfiles?.[pId] || syncDb.policyProfiles?.['default'] || { maxTokens: 100000 };
-           syncDb.agents[agentId].totalTokens = pol.maxTokens;
-           await saveDb(syncDb);
-        }
-      }
     }
 
     durationMs = Date.now() - startTime;
