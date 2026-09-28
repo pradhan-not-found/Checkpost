@@ -162,12 +162,12 @@ export default function LLMTestPage() {
           <div className="mt-6 overflow-hidden rounded-xl bg-red-500/10 border border-red-500/20 flex flex-col">
             <div className="px-5 py-3 border-b border-red-500/20 bg-red-500/10 flex items-center gap-3">
               <ShieldAlert className="w-5 h-5 text-red-500 shrink-0" />
-              <span className="text-sm font-bold text-red-600 dark:text-red-400 tracking-wide uppercase">
+              <span className="text-sm font-bold text-red-600 tracking-wide uppercase">
                 Execution Blocked
               </span>
             </div>
             <div className="p-5">
-              <span className="text-sm text-red-900 dark:text-red-200 font-mono leading-relaxed break-words whitespace-pre-wrap block max-h-64 overflow-y-auto">
+              <span className="text-sm text-red-900 font-mono leading-relaxed break-words whitespace-pre-wrap block max-h-64 overflow-y-auto">
                 {error}
               </span>
             </div>
