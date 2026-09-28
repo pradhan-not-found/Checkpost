@@ -307,13 +307,22 @@ export default function PoliciesPage() {
                   <span className="text-sm font-semibold text-[var(--app-ink)]">{profile.rules?.length || 0} configured</span>
                 </div>
                 <div className="flex items-center justify-between pt-4 mt-2 border-t border-[var(--app-hairline)]">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)]">Assigned Agents</span>
-                  <div className="flex items-center -space-x-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)] shrink-0 mr-4">Assigned Agents</span>
+                  <div className="group flex items-center -space-x-1.5 hover:space-x-1 transition-all duration-300 cursor-default justify-end w-full">
                     {pAgents.slice(0, 3).map((a, i) => {
                       const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
                       return (
-                        <div key={a.id} className="relative z-10 w-7 h-7 rounded-full border-[1.5px] border-white bg-white overflow-hidden shadow-sm" style={{ zIndex: 10 - i }} title={a.name}>
-                          <img src={logoUrl} alt={a.name} className="w-full h-full object-cover" />
+                        <div 
+                          key={a.id} 
+                          className="relative z-10 flex items-center bg-[var(--app-canvas)] rounded-full border-[1.5px] border-white shadow-sm transition-all duration-300 max-w-[28px] group-hover:max-w-[150px] overflow-hidden h-7" 
+                          style={{ zIndex: 10 - i }} 
+                        >
+                          <div className="w-[25px] h-[25px] shrink-0 rounded-full overflow-hidden flex items-center justify-center p-0.5">
+                            <img src={logoUrl} alt={a.name} className="w-full h-full object-contain" />
+                          </div>
+                          <span className="opacity-0 whitespace-nowrap transition-all duration-300 group-hover:opacity-100 pr-2 pl-0.5 text-[10px] font-bold text-[var(--app-ink)] truncate">
+                            {a.name}
+                          </span>
                         </div>
                       );
                     })}
