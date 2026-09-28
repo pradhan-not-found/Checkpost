@@ -679,7 +679,28 @@ export default function Page() {
                       <input
                         type={keyRevealed ? "text" : "password"}
                         value={providerApiKey}
-                        onChange={(e) => setProviderApiKey(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setProviderApiKey(val);
+                          
+                          // Auto-detect provider based on API key prefix
+                          if (val.startsWith('sk-ant-')) {
+                            const match = PROVIDERS.find(p => p.provider === 'Anthropic');
+                            if (match) setSelectedPreset(match);
+                          } else if (val.startsWith('sk-proj-') || val.startsWith('sk-')) {
+                            const match = PROVIDERS.find(p => p.provider === 'OpenAI');
+                            if (match) setSelectedPreset(match);
+                          } else if (val.startsWith('AIza')) {
+                            const match = PROVIDERS.find(p => p.provider === 'Google');
+                            if (match) setSelectedPreset(match);
+                          } else if (val.startsWith('gsk_')) {
+                            const match = PROVIDERS.find(p => p.provider === 'Meta');
+                            if (match) setSelectedPreset(match);
+                          } else if (val.startsWith('xai-')) {
+                            const match = PROVIDERS.find(p => p.provider === 'xAI');
+                            if (match) setSelectedPreset(match);
+                          }
+                        }}
                         placeholder="sk-..."
                         className="w-full bg-transparent text-sm font-mono text-[var(--app-ink)] focus:outline-none placeholder:text-[var(--app-muted)]"
                       />
