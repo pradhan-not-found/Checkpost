@@ -93,6 +93,14 @@ const PREBUILT_TEMPLATES = [
       { icon: 'server',  name: 'Sandbox Production Access',   description: 'Prevent agents from directly accessing production databases. Route all reads through a read-only replica.' },
     ],
   },
+  {
+    category: 'Domain Restrictions',
+    categoryIcon: <CheckCircle2 className="w-3.5 h-3.5" />,
+    color: 'text-[var(--app-ink)]',
+    templates: [
+      { icon: 'shield', name: 'Food Ordering Only', description: 'Restrict all interactions to food ordering. Block off-topic questions like programming, math, or general knowledge.' },
+    ],
+  },
 ];
 
 type PolicyProfile = {

@@ -55,6 +55,13 @@ export async function POST(req: Request) {
           blockedReason = 'PII Exfiltration (SSN/CC detected)';
         }
       }
+
+      if (!blockedReason && policy.rules.includes('Food Ordering Only')) {
+        const offTopicKeywords = ['python', 'code', 'javascript', 'html', 'css', 'math', 'calculate', 'a+b', 'solve', 'how to program'];
+        if (offTopicKeywords.some(kw => promptLower.includes(kw))) {
+          blockedReason = 'Domain Restriction: Stick to questions about ordering food.';
+        }
+      }
     }
 
     if (blockedReason) {
