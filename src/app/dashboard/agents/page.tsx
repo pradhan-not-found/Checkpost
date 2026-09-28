@@ -485,40 +485,7 @@ export default function Page() {
                 <h3 className="text-base font-semibold text-[var(--app-ink)] tracking-tight leading-snug">{agent.name}</h3>
                 <p className="text-xs text-[var(--app-muted)] font-medium mt-0.5 mb-4">{agent.provider}</p>
 
-                <div className="mb-6 p-4 rounded-2xl border border-[var(--app-hairline)] bg-[var(--app-canvas)] flex items-center justify-between group hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 shadow-sm hover:shadow-md">
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
-                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                        <circle
-                          cx="18" cy="18" r="15.9155"
-                          className="text-[var(--app-soft)] stroke-current"
-                          strokeWidth="3" fill="none"
-                        />
-                        <circle
-                          cx="18" cy="18" r="15.9155"
-                          className={`${agent.status === 'Compromised' ? 'text-red-500' : 'text-[var(--app-ink)]'} stroke-current transition-all duration-700 ease-out`}
-                          strokeDasharray={`${Math.max(0.1, agent.progress)}, 100`}
-                          strokeWidth="3" fill="none" strokeLinecap="round"
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-[10px] font-bold text-[var(--app-ink)]">{Math.round(agent.progress)}%</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Token Quota</span>
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-base font-bold text-[var(--app-ink)] tracking-tight">
-                          {agent.tokensUsed.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-[var(--app-muted)] font-medium">
-                          / {agent.maxTokens.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
 
                 <div className="flex items-center justify-between text-xs font-medium">
                   <span className="text-[var(--app-muted)]">Risk Profile</span>
@@ -527,7 +494,29 @@ export default function Page() {
               </div>
 
               <div className="pt-4 mt-4 border-t border-[var(--app-hairline)] flex items-center justify-between">
-                <span className="text-[10px] font-mono text-[var(--app-muted)] uppercase tracking-wider truncate mr-2" title={agent.id}>{agent.id}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-[var(--app-muted)] uppercase tracking-wider truncate max-w-[120px]" title={agent.id}>{agent.id}</span>
+                  
+                  <div className="group relative flex items-center justify-center">
+                    <div className="w-4 h-4 cursor-help">
+                      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="15.9155" className="text-[var(--app-hairline)] stroke-current" strokeWidth="4" fill="none" />
+                        <circle
+                          cx="18" cy="18" r="15.9155"
+                          className={`${agent.status === 'Compromised' ? 'text-red-500' : 'text-emerald-500'} stroke-current transition-all duration-700`}
+                          strokeDasharray={`${Math.max(0.1, agent.progress)}, 100`}
+                          strokeWidth="4" fill="none" strokeLinecap="round"
+                        />
+                      </svg>
+                    </div>
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-max px-2.5 py-1.5 bg-[var(--app-ink)] text-[var(--app-canvas)] rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 shadow-lg pointer-events-none flex flex-col items-center">
+                      <span className="text-[var(--app-canvas)]/70 uppercase text-[8px] font-bold tracking-wider mb-0.5">Token Quota</span>
+                      <span className="text-[10px] font-bold">{agent.tokensUsed.toLocaleString()} / {agent.maxTokens.toLocaleString()}</span>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-[4px] border-transparent border-t-[var(--app-ink)]" />
+                    </div>
+                  </div>
+                </div>
+
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset ${statusStyles(agent.status)}`}>
                   {agent.status}
                 </span>
