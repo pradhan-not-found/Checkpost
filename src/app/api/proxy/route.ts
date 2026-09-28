@@ -71,12 +71,13 @@ export async function POST(req: Request) {
         const genAI = new GoogleGenerativeAI(apiKey);
         let response;
 
-        // Try models that have actual free-tier quota in order of preference
-        // NOTE: gemini-pro-latest → gemini-3.1-pro which has limit:0 on free tier — avoid it
+        // Models with actual free-tier quota on v1beta endpoint
+        // gemini-pro-latest → gemini-3.1-pro (limit: 0 on free tier) — never use
+        // gemini-1.5-flash-8b → 404 on v1beta — never use
         const geminiModelChain = [
-          'gemini-2.0-flash-exp',
+          'gemini-2.0-flash',
+          'gemini-2.0-flash-lite',
           'gemini-1.5-flash',
-          'gemini-1.5-flash-8b',
         ];
 
         let geminiError: any = null;
@@ -86,19 +87,19 @@ export async function POST(req: Request) {
             const result = await model.generateContent(prompt);
             response = await result.response;
             geminiError = null;
-            break; // success
+            break;
           } catch (err: any) {
             geminiError = err;
-            // Only continue the chain on 404 (model not found) or 429 (quota — try next)
             const msg = err.message || '';
+            // 404 = model not found, 429 = quota — both are retryable in the chain
             if (!(msg.includes('404') || msg.includes('429') || err.status === 404 || err.status === 429)) {
-              throw err; // auth error or other hard failure — stop immediately
+              throw err; // hard auth failure — stop immediately
             }
           }
         }
 
         if (!response) {
-          // All Gemini models exhausted — auto-fallback to Groq free tier if a Groq key exists
+          // All Gemini models rate-limited — auto-fallback to Groq if key exists
           const groqKey = db.userSettings?.[userId]?.groqApiKey;
           if (groqKey) {
             const groq = new Groq({ apiKey: groqKey });
@@ -106,16 +107,20 @@ export async function POST(req: Request) {
               messages: [{ role: 'user', content: prompt }],
               model: 'llama-3.1-8b-instant',
             });
-            text = `[Gemini quota exhausted — responded via Groq Llama fallback]\n\n${chatCompletion.choices[0]?.message?.content || ''}`;
+            text = `[Gemini quota exhausted — auto-responded via Groq Llama fallback]\n\n${chatCompletion.choices[0]?.message?.content || ''}`;
             totalTokens = chatCompletion.usage?.total_tokens || 0;
             cost = (totalTokens / 1000000) * 0.05;
           } else {
-            throw geminiError || new Error('All Gemini models are rate-limited. Add a Groq API key in Settings as a fallback provider.');
+            throw new Error(
+              'Your Google Gemini free-tier quota is exhausted (limit: 0). ' +
+              'To continue: go to console.groq.com → get a free API key → add it in Settings → Provider Keys → Groq. ' +
+              'Checkpost will automatically use Groq as a fallback.'
+            );
           }
         } else {
           text = response.text();
           totalTokens = response.usageMetadata?.totalTokenCount || Math.ceil(text.length / 4) + Math.ceil(prompt.length / 4);
-          cost = (totalTokens / 1000000) * 0.10; // Gemini Flash pricing
+          cost = (totalTokens / 1000000) * 0.10;
         }
       } else if (provider.includes('groq') && apiKey) {
         const groq = new Groq({ apiKey });
