@@ -140,7 +140,18 @@ export default function Page() {
 
   // Registration State
   const [isRegistering, setIsRegistering] = useState(false);
-  const [newAgentDetails, setNewAgentDetails] = useState<{id: string, url: string, key: string} | null>(null);
+  const [newAgentDetails, setNewAgentDetails] = useState<{id: string, url: string, key: string, isNew?: boolean} | null>(null);
+
+  const openIntegrationModal = (agent: Agent) => {
+    setNewAgentDetails({
+      id: agent.id,
+      url: `https://api.checkpost.app/v1/${agent.id}/chat`,
+      key: agent.proxy_api_key || 'Missing proxy key',
+      isNew: false
+    });
+    setIsModalOpen(true);
+    setActiveMenu(null);
+  };
 
   const { user } = useAuth();
   const { dbData, loading } = useDatabase();
@@ -262,7 +273,8 @@ export default function Page() {
       setNewAgentDetails({
         id: newId,
         url: `https://api.checkpost.app/v1/${newId}/chat`,
-        key: proxy_api_key
+        key: proxy_api_key,
+        isNew: true
       });
       
     } catch (err) {
@@ -444,6 +456,12 @@ export default function Page() {
                       >
                         Test Agent
                       </button>
+                      <button
+                        onClick={() => openIntegrationModal(agent)}
+                        className="w-full text-left px-4 py-2 text-sm text-[var(--app-ink)] hover:bg-[var(--app-soft)] transition-colors font-medium border-b border-[var(--app-hairline)]"
+                      >
+                        Integration Info
+                      </button>
                       {agent.proxy_api_key && (
                         <button
                           onClick={() => handleSimulateThreat(agent.id, agent.proxy_api_key!)}
@@ -504,7 +522,7 @@ export default function Page() {
           <div className="bg-[var(--app-canvas)] rounded-2xl shadow-xl border border-[var(--app-hairline)] w-full max-w-md overflow-hidden animate-fade-up">
             <div className="px-6 py-4 border-b border-[var(--app-hairline)] flex items-center justify-between">
               <h2 className="text-lg font-semibold text-[var(--app-ink)]">
-                {newAgentDetails ? 'Agent Registered Successfully' : 'Register New Agent'}
+                {newAgentDetails ? (newAgentDetails.isNew ? 'Agent Registered Successfully' : 'Agent Integration Details') : 'Register New Agent'}
               </h2>
               <button onClick={closeModal} className="text-[var(--app-muted)] hover:text-[var(--app-ink)] transition-colors">
                 <X className="w-5 h-5" />
@@ -520,9 +538,11 @@ export default function Page() {
                   </div>
                 </div>
                 <div className="text-center space-y-1 w-full">
-                  <h3 className="text-lg font-bold text-[var(--app-ink)] tracking-tight">Deployment Active</h3>
+                  <h3 className="text-lg font-bold text-[var(--app-ink)] tracking-tight">
+                    {newAgentDetails.isNew ? 'Deployment Active' : 'Active Configuration'}
+                  </h3>
                   <p className="text-xs text-[var(--app-muted)] leading-relaxed">
-                    Registered with Checkpost proxy.
+                    {newAgentDetails.isNew ? 'Registered with Checkpost proxy.' : 'Use these details to connect to the Checkpost firewall proxy.'}
                   </p>
                 </div>
                 
