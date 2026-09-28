@@ -19,7 +19,9 @@ export type DatabaseSchema = {
     policyId?: string;
     totalTokens: number;
     totalSpend: number;
+    totalCalls: number;
     blockedCount: number;
+    lastCallAt?: string;
   }>;
   userSettings?: Record<string, {
     geminiApiKey?: string;
@@ -101,8 +103,10 @@ export async function saveDb(data: DatabaseSchema): Promise<void> {
 export async function updateAgentUsage(agentId: string, tokens: number, cost: number): Promise<void> {
   const db = await getDb();
   if (db.agents[agentId]) {
-    db.agents[agentId].totalTokens += tokens;
-    db.agents[agentId].totalSpend += cost;
+    db.agents[agentId].totalTokens = (db.agents[agentId].totalTokens || 0) + tokens;
+    db.agents[agentId].totalSpend  = (db.agents[agentId].totalSpend  || 0) + cost;
+    db.agents[agentId].totalCalls  = (db.agents[agentId].totalCalls  || 0) + 1;
+    db.agents[agentId].lastCallAt  = new Date().toISOString();
     await saveDb(db);
   }
 }

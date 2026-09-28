@@ -96,11 +96,14 @@ type Agent = {
   provider: string;
   logo: string;
   status: string;
-  calls: string;
+  calls: number;
+  lastCallAt?: string;
   risk: string;
   progress: number;
   tokensUsed: number;
+  totalSpend: number;
   maxTokens: number;
+  maxSpend: number;
   proxy_api_key?: string;
 };
 
@@ -205,9 +208,12 @@ export default function Page() {
             provider,
             logo,
             status,
-            calls: totalCalls.toString(),
+            calls: info.totalCalls || 0,
+            lastCallAt: info.lastCallAt,
             tokensUsed: info.totalTokens || 0,
+            totalSpend: info.totalSpend || 0,
             maxTokens: maxTokens,
+            maxSpend: maxSpend,
             risk: info.blockedCount > 0 ? 'Medium' : 'Low',
             progress,
             proxy_api_key: info.proxy_api_key,
