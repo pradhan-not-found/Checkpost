@@ -90,6 +90,9 @@ const PREBUILT_TEMPLATES = [
     templates: [
       { icon: 'network', name: 'API Allowlist Enforcement',   description: 'Restrict agent outbound calls to a pre-approved list of external APIs and domains only.' },
       { icon: 'eyeoff',  name: 'Least Privilege Access',      description: 'Automatically revoke agent permissions to any resource it has not accessed in the last 30 days.' },
+      { icon: 'server',  name: 'Sandbox Production Access',   description: 'Prevent agents from directly accessing production databases. Route all reads through a read-only replica.' },
+    ],
+  },
   {
     category: 'Domain Guardrails',
     categoryIcon: <CheckCircle2 className="w-3.5 h-3.5" />,
