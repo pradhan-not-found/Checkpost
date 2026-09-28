@@ -597,7 +597,7 @@ export default function Page() {
                   {/* Provider Logo */}
                   <div className="w-16 h-16 rounded-2xl bg-[var(--app-canvas)] border-2 border-[var(--app-hairline)] flex items-center justify-center p-3 shadow-sm shrink-0">
                     <img 
-                      src={selectedPreset?.logo || guessLogo(newAgentDetails.provider || newAgentDetails.name || '').logo} 
+                      src={guessLogo(newAgentDetails.provider || newAgentDetails.name || '').logo} 
                       alt={newAgentDetails.provider} 
                       className="w-full h-full object-contain" 
                       onError={(e) => (e.currentTarget.style.display = 'none')} 

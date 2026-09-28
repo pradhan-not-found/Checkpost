@@ -6,17 +6,32 @@ import { getDb, saveDb, updateAgentUsage, incrementAgentBlocked, updateProviderL
 export async function POST(req: Request) {
   try {
     const reqBody = await req.json();
-    const { prompt, agentId, userId = 'admin' } = reqBody;
+    let { prompt, agentId, userId = 'admin' } = reqBody;
 
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
 
     const db = await getDb();
-    const agent = db.agents[agentId];
+    
+    // Attempt to identify the agent via the Authorization Bearer Token
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader?.split(' ')[1];
+    
+    let actualAgentId = agentId;
+    let agent = db.agents[actualAgentId];
+
+    if (!agent && token) {
+      const foundEntry = Object.entries(db.agents).find(([id, a]: [string, any]) => a.apiKey === token);
+      if (foundEntry) {
+        actualAgentId = foundEntry[0];
+        agent = foundEntry[1];
+        agentId = actualAgentId; // Reassign so subsequent logs use the correctly identified ID
+      }
+    }
 
     if (!agent) {
-      return NextResponse.json({ error: 'Unknown agent ID' }, { status: 400 });
+      return NextResponse.json({ error: 'Unknown agent ID or invalid API Key' }, { status: 400 });
     }
     
     const policyId = agent.policyId || 'default';
