@@ -512,47 +512,47 @@ export default function Page() {
             </div>
 
             {newAgentDetails ? (
-              <div className="p-8 space-y-6 flex flex-col items-center">
+              <div className="p-6 space-y-5 flex flex-col items-center">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full"></div>
-                  <div className="relative w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white rounded-2xl shadow-lg border border-emerald-300 dark:border-emerald-700 flex items-center justify-center mb-2">
-                    <ShieldCheck className="w-10 h-10" />
+                  <div className="absolute inset-0 bg-emerald-500/20 blur-lg rounded-full"></div>
+                  <div className="relative w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white rounded-xl shadow-lg border border-emerald-300 dark:border-emerald-700 flex items-center justify-center">
+                    <ShieldCheck className="w-6 h-6" />
                   </div>
                 </div>
-                <div className="text-center space-y-2 w-full">
-                  <h3 className="text-xl font-bold text-[var(--app-ink)] tracking-tight">Deployment Active</h3>
-                  <p className="text-sm text-[var(--app-muted)] leading-relaxed">
-                    Your agent has been securely registered with the Checkpost firewall proxy and is ready to process traffic.
+                <div className="text-center space-y-1 w-full">
+                  <h3 className="text-lg font-bold text-[var(--app-ink)] tracking-tight">Deployment Active</h3>
+                  <p className="text-xs text-[var(--app-muted)] leading-relaxed">
+                    Registered with Checkpost proxy.
                   </p>
                 </div>
                 
-                <div className="w-full flex flex-col gap-3">
-                  <div className="flex flex-col gap-1.5 p-4 rounded-xl border border-[var(--app-hairline)] bg-[var(--app-canvas)] shadow-sm">
+                <div className="w-full flex flex-col gap-2">
+                  <div className="flex flex-col gap-1 p-3 rounded-lg border border-[var(--app-hairline)] bg-[var(--app-canvas)] shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Agent ID</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Agent ID</span>
                       <button onClick={() => navigator.clipboard.writeText(newAgentDetails.id)} className="text-[var(--app-muted)] hover:text-[var(--app-ink)] transition-colors"><Copy className="w-3.5 h-3.5" /></button>
                     </div>
-                    <code className="text-[13px] font-mono text-[var(--app-ink)] truncate select-all">{newAgentDetails.id}</code>
+                    <code className="text-[12px] font-mono text-[var(--app-ink)] truncate select-all">{newAgentDetails.id}</code>
                   </div>
 
-                  <div className="flex flex-col gap-1.5 p-4 rounded-xl border border-[var(--app-hairline)] bg-[var(--app-canvas)] shadow-sm">
+                  <div className="flex flex-col gap-1 p-3 rounded-lg border border-[var(--app-hairline)] bg-[var(--app-canvas)] shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Proxy URL</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Proxy URL</span>
                       <button onClick={() => navigator.clipboard.writeText(newAgentDetails.url)} className="text-[var(--app-muted)] hover:text-[var(--app-ink)] transition-colors"><Copy className="w-3.5 h-3.5" /></button>
                     </div>
-                    <code className="text-[13px] font-mono text-[var(--app-ink)] truncate select-all">{newAgentDetails.url}</code>
+                    <code className="text-[12px] font-mono text-[var(--app-ink)] truncate select-all">{newAgentDetails.url}</code>
                   </div>
 
-                  <div className="flex flex-col gap-1.5 p-5 rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-[0_4px_12px_rgba(16,185,129,0.1)] mt-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">API Key <span className="opacity-75 font-medium ml-1">(Store securely)</span></span>
-                      <button onClick={() => navigator.clipboard.writeText(newAgentDetails.key)} className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"><Copy className="w-4 h-4" /></button>
+                  <div className="flex flex-col gap-1 p-3 rounded-lg border-2 border-emerald-500/30 bg-emerald-500/5 shadow-[0_4px_12px_rgba(16,185,129,0.1)] mt-1">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">API Key <span className="opacity-75 font-medium ml-1">(Store securely)</span></span>
+                      <button onClick={() => navigator.clipboard.writeText(newAgentDetails.key)} className="text-emerald-600 hover:text-emerald-700 transition-colors"><Copy className="w-3.5 h-3.5" /></button>
                     </div>
-                    <code className="text-[15px] font-mono font-bold text-emerald-700 dark:text-emerald-300 break-all select-all">{newAgentDetails.key}</code>
+                    <code className="text-[13px] font-mono font-bold text-emerald-700 break-all select-all">{newAgentDetails.key}</code>
                   </div>
                 </div>
 
-                <button onClick={closeModal} className="w-full cta-btn-dark text-on-dark shadow-md px-[16px] py-[12px] text-[14px] font-[600] rounded-xl transition-all hover:scale-[1.02]">
+                <button onClick={closeModal} className="w-full cta-btn-dark text-on-dark shadow-md px-[16px] py-[10px] text-[13px] font-[600] rounded-xl transition-all hover:scale-[1.02]">
                   Return to Dashboard
                 </button>
               </div>
