@@ -737,21 +737,21 @@ export default function Page() {
                   
                   {testStatus === 'error' ? (
                     <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 shadow-sm flex flex-col gap-3">
-                      <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-bold">
+                      <div className="flex items-center gap-2 text-red-600 font-bold">
                         <ShieldAlert className="w-5 h-5" />
                         Execution Blocked / Error
                       </div>
-                      <div className="font-mono text-xs text-red-900 dark:text-red-200 whitespace-pre-wrap break-words bg-red-500/5 p-3 rounded-lg border border-red-500/20 shadow-inner">
+                      <div className="font-mono text-xs text-red-900 whitespace-pre-wrap break-words bg-red-500/5 p-3 rounded-lg border border-red-500/20 shadow-inner max-h-[300px] overflow-y-auto">
                         {testResult}
                       </div>
                     </div>
                   ) : testStatus === 'success' ? (
                     <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 shadow-sm flex flex-col gap-3">
-                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold">
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold">
                         <ShieldCheck className="w-5 h-5" />
                         Execution Allowed
                       </div>
-                      <div className="font-mono text-xs text-emerald-900 dark:text-emerald-200 whitespace-pre-wrap break-words bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/20 shadow-inner">
+                      <div className="font-mono text-xs text-emerald-900 whitespace-pre-wrap break-words bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/20 shadow-inner max-h-[300px] overflow-y-auto">
                         {testResult}
                       </div>
                     </div>
