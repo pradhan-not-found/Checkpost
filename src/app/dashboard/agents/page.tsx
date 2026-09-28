@@ -155,7 +155,7 @@ export default function Page() {
   const openIntegrationModal = (agent: Agent) => {
     setNewAgentDetails({
       id: agent.id,
-      url: `https://api.checkpost.app/v1/${agent.id}/chat`,
+      url: `${typeof window !== 'undefined' ? window.location.origin : 'https://checkpost-ai.vercel.app'}/api/proxy`,
       key: agent.proxy_api_key || 'Missing proxy key',
       name: agent.name,
       provider: agent.provider,
@@ -300,7 +300,7 @@ export default function Page() {
       // Show the generated API key to the user inline
       setNewAgentDetails({
         id: newId,
-        url: `https://api.checkpost.app/v1/${newId}/chat`,
+        url: `${typeof window !== 'undefined' ? window.location.origin : 'https://checkpost-ai.vercel.app'}/api/proxy`,
         key: proxy_api_key,
         name: agentName,
         provider: selectedPreset.provider,
