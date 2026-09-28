@@ -553,12 +553,6 @@ export default function Page() {
 
             {newAgentDetails ? (
               <div className="p-6 space-y-5 flex flex-col items-center">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-black/5 blur-lg rounded-full"></div>
-                  <div className="relative w-12 h-12 bg-[var(--app-ink)] text-[var(--app-canvas)] rounded-xl shadow-lg border border-black/10 flex items-center justify-center">
-                    <ShieldCheck className="w-6 h-6" />
-                  </div>
-                </div>
                 <div className="text-center space-y-1 w-full">
                   <h3 className="text-lg font-bold text-[var(--app-ink)] tracking-tight">
                     {newAgentDetails.isNew ? 'Deployment Active' : 'Active Configuration'}
