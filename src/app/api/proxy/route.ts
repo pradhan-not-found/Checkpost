@@ -56,10 +56,31 @@ export async function POST(req: Request) {
         }
       }
 
-      if (!blockedReason && policy.rules.includes('Food Ordering Only')) {
+      if (!blockedReason && policy.rules.includes('Food & Beverage Only')) {
         const offTopicKeywords = ['python', 'code', 'javascript', 'html', 'css', 'math', 'calculate', 'a+b', 'solve', 'how to program'];
         if (offTopicKeywords.some(kw => promptLower.includes(kw))) {
-          blockedReason = 'Domain Restriction: Stick to questions about ordering food.';
+          blockedReason = 'Domain Guardrail: Stick to food ordering and restaurant inquiries.';
+        }
+      }
+      
+      if (!blockedReason && policy.rules.includes('E-Commerce & Retail Only')) {
+        const offTopicKeywords = ['python', 'code', 'javascript', 'math', 'calculate', 'a+b', 'solve', 'medical', 'symptoms', 'recipe'];
+        if (offTopicKeywords.some(kw => promptLower.includes(kw))) {
+          blockedReason = 'Domain Guardrail: Stick to shopping and e-commerce inquiries.';
+        }
+      }
+
+      if (!blockedReason && policy.rules.includes('Healthcare & Medical Only')) {
+        const offTopicKeywords = ['python', 'code', 'buy', 'shop', 'cart', 'math', 'a+b', 'recipe'];
+        if (offTopicKeywords.some(kw => promptLower.includes(kw))) {
+          blockedReason = 'Domain Guardrail: Stick to medical and healthcare inquiries.';
+        }
+      }
+
+      if (!blockedReason && policy.rules.includes('IT Helpdesk Only')) {
+        const offTopicKeywords = ['buy', 'shop', 'food', 'recipe', 'medical', 'symptoms', 'math', 'a+b'];
+        if (offTopicKeywords.some(kw => promptLower.includes(kw))) {
+          blockedReason = 'Domain Guardrail: Stick to IT support and troubleshooting.';
         }
       }
     }

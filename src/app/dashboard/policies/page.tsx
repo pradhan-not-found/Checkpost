@@ -90,15 +90,15 @@ const PREBUILT_TEMPLATES = [
     templates: [
       { icon: 'network', name: 'API Allowlist Enforcement',   description: 'Restrict agent outbound calls to a pre-approved list of external APIs and domains only.' },
       { icon: 'eyeoff',  name: 'Least Privilege Access',      description: 'Automatically revoke agent permissions to any resource it has not accessed in the last 30 days.' },
-      { icon: 'server',  name: 'Sandbox Production Access',   description: 'Prevent agents from directly accessing production databases. Route all reads through a read-only replica.' },
-    ],
-  },
   {
-    category: 'Domain Restrictions',
+    category: 'Domain Guardrails',
     categoryIcon: <CheckCircle2 className="w-3.5 h-3.5" />,
     color: 'text-[var(--app-ink)]',
     templates: [
-      { icon: 'shield', name: 'Food Ordering Only', description: 'Restrict all interactions to food ordering. Block off-topic questions like programming, math, or general knowledge.' },
+      { icon: 'shield', name: 'Food & Beverage Only', description: 'Restrict interactions to restaurant menus, food ordering, and delivery. Block unrelated topics like coding or math.' },
+      { icon: 'shield', name: 'E-Commerce & Retail Only', description: 'Restrict interactions to shopping, products, returns, and shipping. Block off-topic questions.' },
+      { icon: 'shield', name: 'Healthcare & Medical Only', description: 'Restrict interactions to appointment scheduling and clinic FAQs. Block off-topic questions.' },
+      { icon: 'shield', name: 'IT Helpdesk Only', description: 'Restrict interactions to tech support, password resets, and troubleshooting. Block off-topic questions.' },
     ],
   },
 ];
