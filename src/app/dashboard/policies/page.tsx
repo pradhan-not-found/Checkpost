@@ -308,12 +308,21 @@ export default function PoliciesPage() {
                 </div>
                 <div className="flex items-center justify-between pt-4 mt-2 border-t border-[var(--app-hairline)] relative">
                   <span className="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)] shrink-0 mr-4">Assigned Agents</span>
-                  <div className="group relative flex items-center -space-x-1.5 cursor-pointer justify-end w-max">
+                  <div className="flex items-center -space-x-1.5 hover:space-x-1 transition-all duration-300 justify-end w-max">
                     {pAgents.slice(0, 3).map((a, i) => {
                       const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
                       return (
-                        <div key={a.id} className="relative z-10 w-7 h-7 rounded-full border-[1.5px] border-white bg-white overflow-hidden shadow-sm" style={{ zIndex: 10 - i }}>
-                          <img src={logoUrl} alt={a.name} className="w-full h-full object-contain p-0.5" />
+                        <div key={a.id} className="group/item relative z-10 hover:z-50" style={{ zIndex: 10 - i }}>
+                          <div className="w-7 h-7 rounded-full border-[1.5px] border-white bg-white overflow-hidden shadow-sm cursor-pointer transition-transform group-hover/item:scale-110">
+                            <img src={logoUrl} alt={a.name} className="w-full h-full object-contain p-0.5" />
+                          </div>
+                          
+                          {/* Individual Tooltip Bubble */}
+                          <div className="absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-max max-w-[120px] bg-white text-[var(--app-ink)] border border-[var(--app-hairline)] px-2.5 py-1 rounded-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.05)] pointer-events-none z-[100] flex flex-col items-center justify-center">
+                            <span className="text-[10px] font-semibold truncate w-full text-center relative z-10">{a.name}</span>
+                            {/* Rotated square for precise, reliable arrow rendering */}
+                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white border-b border-r border-[var(--app-hairline)] rotate-45 z-0 rounded-sm" />
+                          </div>
                         </div>
                       );
                     })}
@@ -323,24 +332,6 @@ export default function PoliciesPage() {
                       </div>
                     )}
                     {pAgents.length === 0 && <span className="text-xs text-[var(--app-muted)]">None</span>}
-
-                    {/* Minimal Hover Card */}
-                    {pAgents.length > 0 && (
-                      <div className="absolute bottom-[calc(100%+8px)] right-0 w-max min-w-[140px] bg-[var(--app-canvas)] border border-[var(--app-hairline)] rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-[0_8px_30px_rgb(0,0,0,0.08)] pointer-events-none p-1.5 flex flex-col">
-                        <div className="text-[10px] font-semibold uppercase tracking-wider text-[var(--app-muted)] mb-1 px-2 pt-1">Assigned Agents</div>
-                        {pAgents.map(a => {
-                          const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
-                          return (
-                            <div key={a.id} className="flex items-center gap-2.5 p-1.5 rounded-lg transition-colors">
-                              <div className="w-5 h-5 rounded border border-[var(--app-hairline)] bg-white flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
-                                <img src={logoUrl} alt={a.name} className="w-3.5 h-3.5 object-contain" />
-                              </div>
-                              <span className="text-xs font-semibold text-[var(--app-ink)] pr-2">{a.name}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
