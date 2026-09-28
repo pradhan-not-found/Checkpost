@@ -786,12 +786,12 @@ export default function Page() {
                   <label className="text-xs font-bold uppercase tracking-wider text-[var(--app-muted)]">Proxy Response</label>
                   
                   {testStatus === 'error' ? (
-                    <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 shadow-sm flex flex-col gap-3">
-                      <div className="flex items-center gap-2 text-red-600 font-bold">
+                    <div className={`p-4 rounded-xl border ${testResult?.includes('Checkpost Policy Violation') ? 'border-red-500/30 bg-red-500/10' : 'border-amber-500/30 bg-amber-500/10'} shadow-sm flex flex-col gap-3`}>
+                      <div className={`flex items-center gap-2 ${testResult?.includes('Checkpost Policy Violation') ? 'text-red-600' : 'text-amber-600'} font-bold`}>
                         <ShieldAlert className="w-5 h-5" />
-                        Execution Blocked / Error
+                        {testResult?.includes('Checkpost Policy Violation') ? 'Blocked by Firewall' : 'Provider Error'}
                       </div>
-                      <div className="font-mono text-xs text-red-900 whitespace-pre-wrap break-words bg-red-500/5 p-3 rounded-lg border border-red-500/20 shadow-inner max-h-[300px] overflow-y-auto">
+                      <div className={`font-mono text-xs ${testResult?.includes('Checkpost Policy Violation') ? 'text-red-900 bg-red-500/5 border-red-500/20' : 'text-amber-900 bg-amber-500/5 border-amber-500/20'} whitespace-pre-wrap break-words p-3 rounded-lg border shadow-inner max-h-[300px] overflow-y-auto`}>
                         {testResult}
                       </div>
                     </div>

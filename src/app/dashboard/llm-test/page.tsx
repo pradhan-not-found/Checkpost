@@ -159,15 +159,15 @@ export default function LLMTestPage() {
         </form>
 
         {error && (
-          <div className="mt-6 overflow-hidden rounded-xl bg-red-500/10 border border-red-500/20 flex flex-col">
-            <div className="px-5 py-3 border-b border-red-500/20 bg-red-500/10 flex items-center gap-3">
-              <ShieldAlert className="w-5 h-5 text-red-500 shrink-0" />
-              <span className="text-sm font-bold text-red-600 tracking-wide uppercase">
-                Execution Blocked
+          <div className={`mt-6 overflow-hidden rounded-xl ${error.includes('Checkpost Policy Violation') ? 'bg-red-500/10 border-red-500/20' : 'bg-amber-500/10 border-amber-500/20'} border flex flex-col`}>
+            <div className={`px-5 py-3 border-b ${error.includes('Checkpost Policy Violation') ? 'border-red-500/20 bg-red-500/10' : 'border-amber-500/20 bg-amber-500/10'} flex items-center gap-3`}>
+              <ShieldAlert className={`w-5 h-5 ${error.includes('Checkpost Policy Violation') ? 'text-red-500' : 'text-amber-500'} shrink-0`} />
+              <span className={`text-sm font-bold ${error.includes('Checkpost Policy Violation') ? 'text-red-600' : 'text-amber-600'} tracking-wide uppercase`}>
+                {error.includes('Checkpost Policy Violation') ? 'Blocked by Firewall' : 'Provider Error'}
               </span>
             </div>
             <div className="p-5">
-              <span className="text-sm text-red-900 font-mono leading-relaxed break-words whitespace-pre-wrap block max-h-64 overflow-y-auto">
+              <span className={`text-sm ${error.includes('Checkpost Policy Violation') ? 'text-red-900' : 'text-amber-900'} font-mono leading-relaxed break-words whitespace-pre-wrap block max-h-64 overflow-y-auto`}>
                 {error}
               </span>
             </div>
