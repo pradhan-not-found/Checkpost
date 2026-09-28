@@ -306,23 +306,14 @@ export default function PoliciesPage() {
                   <span className="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)]">Active Rules</span>
                   <span className="text-sm font-semibold text-[var(--app-ink)]">{profile.rules?.length || 0} configured</span>
                 </div>
-                <div className="flex items-center justify-between pt-4 mt-2 border-t border-[var(--app-hairline)]">
+                <div className="flex items-center justify-between pt-4 mt-2 border-t border-[var(--app-hairline)] relative">
                   <span className="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)] shrink-0 mr-4">Assigned Agents</span>
-                  <div className="group flex items-center -space-x-1.5 hover:space-x-1 transition-all duration-300 cursor-default justify-end w-full">
+                  <div className="group relative flex items-center -space-x-1.5 cursor-pointer justify-end w-max">
                     {pAgents.slice(0, 3).map((a, i) => {
                       const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
                       return (
-                        <div 
-                          key={a.id} 
-                          className="relative z-10 flex items-center bg-[var(--app-canvas)] rounded-full border-[1.5px] border-white shadow-sm transition-all duration-300 max-w-[28px] group-hover:max-w-[150px] overflow-hidden h-7" 
-                          style={{ zIndex: 10 - i }} 
-                        >
-                          <div className="w-[25px] h-[25px] shrink-0 rounded-full overflow-hidden flex items-center justify-center p-0.5">
-                            <img src={logoUrl} alt={a.name} className="w-full h-full object-contain" />
-                          </div>
-                          <span className="opacity-0 whitespace-nowrap transition-all duration-300 group-hover:opacity-100 pr-2 pl-0.5 text-[10px] font-bold text-[var(--app-ink)] truncate">
-                            {a.name}
-                          </span>
+                        <div key={a.id} className="relative z-10 w-7 h-7 rounded-full border-[1.5px] border-white bg-white overflow-hidden shadow-sm" style={{ zIndex: 10 - i }}>
+                          <img src={logoUrl} alt={a.name} className="w-full h-full object-contain p-0.5" />
                         </div>
                       );
                     })}
@@ -332,6 +323,25 @@ export default function PoliciesPage() {
                       </div>
                     )}
                     {pAgents.length === 0 && <span className="text-xs text-[var(--app-muted)]">None</span>}
+
+                    {/* Dark Hover Card Tooltip */}
+                    {pAgents.length > 0 && (
+                      <div className="absolute bottom-[110%] right-0 w-48 bg-[var(--app-ink)] text-[var(--app-canvas)] rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[100] shadow-xl pointer-events-none p-3 flex flex-col gap-2">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-[var(--app-canvas)]/60 mb-0.5">Assigned ({pAgents.length})</div>
+                        {pAgents.map(a => {
+                          const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
+                          return (
+                            <div key={a.id} className="flex items-center gap-2">
+                              <div className="w-6 h-6 rounded bg-white flex items-center justify-center overflow-hidden shrink-0">
+                                <img src={logoUrl} alt={a.name} className="w-full h-full object-contain p-0.5" />
+                              </div>
+                              <span className="text-xs font-medium truncate text-[var(--app-canvas)]">{a.name}</span>
+                            </div>
+                          );
+                        })}
+                        <div className="absolute top-full right-3 border-[6px] border-transparent border-t-[var(--app-ink)]" />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
