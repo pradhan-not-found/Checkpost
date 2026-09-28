@@ -22,6 +22,12 @@ export type DatabaseSchema = {
     totalCalls: number;
     blockedCount: number;
     lastCallAt?: string;
+    // Real provider-side limits (populated from response headers)
+    providerTokenLimit?: number;         // e.g. Groq x-ratelimit-limit-tokens-day
+    providerTokensRemaining?: number;    // e.g. Groq x-ratelimit-remaining-tokens-day
+    providerTokensUsedToday?: number;    // derived: limit - remaining
+    providerLimitResetAt?: string;       // ISO string of when daily limit resets
+    providerLimitUpdatedAt?: string;     // last time we got fresh header data
   }>;
   userSettings?: Record<string, {
     geminiApiKey?: string;
@@ -107,6 +113,29 @@ export async function updateAgentUsage(agentId: string, tokens: number, cost: nu
     db.agents[agentId].totalSpend  = (db.agents[agentId].totalSpend  || 0) + cost;
     db.agents[agentId].totalCalls  = (db.agents[agentId].totalCalls  || 0) + 1;
     db.agents[agentId].lastCallAt  = new Date().toISOString();
+    await saveDb(db);
+  }
+}
+
+export async function updateProviderLimits(
+  agentId: string,
+  limits: {
+    tokenLimit?: number;
+    tokensRemaining?: number;
+    resetAt?: string;
+  }
+): Promise<void> {
+  const db = await getDb();
+  if (db.agents[agentId]) {
+    if (limits.tokenLimit !== undefined)    db.agents[agentId].providerTokenLimit = limits.tokenLimit;
+    if (limits.tokensRemaining !== undefined) {
+      db.agents[agentId].providerTokensRemaining = limits.tokensRemaining;
+      if (limits.tokenLimit !== undefined) {
+        db.agents[agentId].providerTokensUsedToday = limits.tokenLimit - limits.tokensRemaining;
+      }
+    }
+    if (limits.resetAt)  db.agents[agentId].providerLimitResetAt = limits.resetAt;
+    db.agents[agentId].providerLimitUpdatedAt = new Date().toISOString();
     await saveDb(db);
   }
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Groq from 'groq-sdk';
-import { getDb, saveDb, updateAgentUsage, incrementAgentBlocked } from '@/lib/db';
+import { getDb, saveDb, updateAgentUsage, incrementAgentBlocked, updateProviderLimits } from '@/lib/db';
 
 export async function POST(req: Request) {
   try {
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     let durationMs = 0;
 
     try {
-      const provider = (agent.provider || '').toLowerCase();
+      let provider = (agent.provider || '').toLowerCase();
       let apiKey = agent.provider_api_key;
       const userSettings = db.userSettings?.[userId] || {};
       
@@ -66,6 +66,12 @@ export async function POST(req: Request) {
         else if (provider.includes('groq')) apiKey = userSettings.groqApiKey;
         else if (provider.includes('openai') || provider.includes('gpt')) apiKey = userSettings.openAiApiKey;
       }
+
+      // Key-prefix auto-detection — overrides whatever provider name was set
+      if (apiKey?.startsWith('gsk_')) provider = 'groq';
+      else if (apiKey?.startsWith('AIza')) provider = 'gemini';
+      else if (apiKey?.startsWith('sk-ant-')) provider = 'anthropic';
+      else if (apiKey?.startsWith('sk-') && !provider.includes('groq')) provider = provider || 'openai';
 
       if ((provider.includes('gemini') || provider.includes('google')) && apiKey) {
         const genAI = new GoogleGenerativeAI(apiKey);
@@ -102,14 +108,25 @@ export async function POST(req: Request) {
           // All Gemini models rate-limited — auto-fallback to Groq if key exists
           const groqKey = db.userSettings?.[userId]?.groqApiKey;
           if (groqKey) {
+            const modelsReq = await fetch('https://api.groq.com/openai/v1/models', { headers: { 'Authorization': `Bearer ${groqKey}` } });
+            const modelsData = await modelsReq.json();
+            const activeModel = modelsData?.data?.[0]?.id || 'llama3-8b-8192'; // fallback to legacy if api fails
+            
             const groq = new Groq({ apiKey: groqKey });
-            const chatCompletion = await groq.chat.completions.create({
+            const { data: groqFallback, response: groqFallbackRes } = await groq.chat.completions.create({
               messages: [{ role: 'user', content: prompt }],
-              model: 'llama-3.1-8b-instant',
-            });
-            text = `[Gemini quota exhausted — auto-responded via Groq Llama fallback]\n\n${chatCompletion.choices[0]?.message?.content || ''}`;
-            totalTokens = chatCompletion.usage?.total_tokens || 0;
+              model: activeModel,
+            }).withResponse();
+            text = `[Gemini quota exhausted — auto-responded via Groq Llama fallback]\n\n${groqFallback.choices[0]?.message?.content || ''}`;
+            totalTokens = groqFallback.usage?.total_tokens || 0;
             cost = (totalTokens / 1000000) * 0.05;
+            // Capture real Groq daily token limits from response headers
+            const limitDay = parseInt(groqFallbackRes.headers.get('x-ratelimit-limit-tokens-day') || '0');
+            const remainingDay = parseInt(groqFallbackRes.headers.get('x-ratelimit-remaining-tokens-day') || '0');
+            const resetAt = groqFallbackRes.headers.get('x-ratelimit-reset-tokens-day');
+            if (limitDay > 0) {
+              updateProviderLimits(agentId, { tokenLimit: limitDay, tokensRemaining: remainingDay - totalTokens, resetAt: resetAt || undefined }).catch(() => {});
+            }
           } else {
             throw new Error('Google Gemini free-tier quota exhausted. Please check your API plan or try again later.');
           }
@@ -119,14 +136,25 @@ export async function POST(req: Request) {
           cost = (totalTokens / 1000000) * 0.10;
         }
       } else if (provider.includes('groq') && apiKey) {
+        const modelsReq = await fetch('https://api.groq.com/openai/v1/models', { headers: { 'Authorization': `Bearer ${apiKey}` } });
+        const modelsData = await modelsReq.json();
+        const activeModel = modelsData?.data?.[0]?.id || 'llama3-8b-8192'; // fallback to legacy if api fails
+        
         const groq = new Groq({ apiKey });
-        const chatCompletion = await groq.chat.completions.create({
+        const { data: chatCompletion, response: groqRes } = await groq.chat.completions.create({
           messages: [{ role: 'user', content: prompt }],
-          model: 'llama-3.1-8b-instant',
-        });
+          model: activeModel,
+        }).withResponse();
         text = chatCompletion.choices[0]?.message?.content || '';
         totalTokens = chatCompletion.usage?.total_tokens || Math.ceil(text.length / 4) + Math.ceil(prompt.length / 4);
-        cost = (totalTokens / 1000000) * 0.05; // Groq pricing
+        cost = (totalTokens / 1000000) * 0.05;
+        // Capture real Groq daily token limits from response headers
+        const limitDay = parseInt(groqRes.headers.get('x-ratelimit-limit-tokens-day') || '0');
+        const remainingDay = parseInt(groqRes.headers.get('x-ratelimit-remaining-tokens-day') || '0');
+        const resetAt = groqRes.headers.get('x-ratelimit-reset-tokens-day');
+        if (limitDay > 0) {
+          updateProviderLimits(agentId, { tokenLimit: limitDay, tokensRemaining: remainingDay - totalTokens, resetAt: resetAt || undefined }).catch(() => {});
+        }
       } else if ((provider.includes('anthropic') || provider.includes('claude')) && apiKey) {
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',

@@ -1,7 +1,12 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
+// Polyfill navigator for Next.js SSR / API routes where Firebase client SDK might crash
+if (typeof global !== 'undefined' && typeof global.navigator === 'undefined') {
+  (global as any).navigator = { userAgent: 'node.js' };
+}
+
+import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,

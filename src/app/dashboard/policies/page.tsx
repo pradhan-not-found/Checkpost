@@ -390,23 +390,29 @@ export default function PoliciesPage() {
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-[var(--app-ink)] uppercase tracking-wider">Assigned Agents</h3>
                 <div className="bg-[var(--app-soft)] border border-[var(--app-hairline)] rounded-xl p-1 max-h-[140px] overflow-y-auto">
-                  {agents.map(a => (
-                    <label key={a.id} className="flex items-center justify-between px-3 py-2 hover:bg-[var(--app-canvas)] rounded-lg cursor-pointer transition-colors group">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={assignedAgents.includes(a.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) setAssignedAgents([...assignedAgents, a.id]);
-                            else setAssignedAgents(assignedAgents.filter(id => id !== a.id));
-                          }}
-                          className="w-4 h-4 rounded border-[var(--app-hairline)] text-[var(--app-ink)] focus:ring-[var(--app-ink)]"
-                        />
-                        <span className="text-sm font-medium text-[var(--app-ink)]">{a.name}</span>
-                      </div>
-                      <span className="text-xs text-[var(--app-muted)] group-hover:text-[var(--app-ink)] transition-colors">{a.id}</span>
-                    </label>
-                  ))}
+                  {agents.map(a => {
+                    const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
+                    return (
+                      <label key={a.id} className="flex items-center justify-between px-3 py-2.5 hover:bg-[var(--app-canvas)] rounded-lg cursor-pointer transition-colors group border border-transparent hover:border-[var(--app-hairline)] hover:shadow-sm mb-0.5">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={assignedAgents.includes(a.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) setAssignedAgents([...assignedAgents, a.id]);
+                              else setAssignedAgents(assignedAgents.filter(id => id !== a.id));
+                            }}
+                            className="w-4 h-4 rounded border-[var(--app-hairline)] text-[var(--app-ink)] focus:ring-[var(--app-ink)]"
+                          />
+                          <div className="w-6 h-6 rounded bg-[var(--app-canvas)] border border-[var(--app-hairline)] flex items-center justify-center p-0.5 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                            <img src={logoUrl} alt={a.provider} className="w-full h-full object-contain" />
+                          </div>
+                          <span className="text-sm font-medium text-[var(--app-ink)]">{a.name}</span>
+                        </div>
+                        <span className="text-[11px] font-mono text-[var(--app-muted)] group-hover:text-[var(--app-ink)] transition-colors">{a.id}</span>
+                      </label>
+                    );
+                  })}
                   {agents.length === 0 && (
                     <div className="p-4 text-center text-sm text-[var(--app-muted)]">No agents available</div>
                   )}

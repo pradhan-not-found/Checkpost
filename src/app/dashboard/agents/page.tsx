@@ -105,6 +105,13 @@ type Agent = {
   maxTokens: number;
   maxSpend: number;
   proxy_api_key?: string;
+  // Real provider limits
+  providerTokenLimit?: number;
+  providerTokensRemaining?: number;
+  providerTokensUsedToday?: number;
+  providerLimitResetAt?: string;
+  providerLimitUpdatedAt?: string;
+  hasRealProviderData: boolean;
 };
 
 function statusStyles(status: string) {
@@ -143,13 +150,15 @@ export default function Page() {
 
   // Registration State
   const [isRegistering, setIsRegistering] = useState(false);
-  const [newAgentDetails, setNewAgentDetails] = useState<{id: string, url: string, key: string, isNew?: boolean} | null>(null);
+  const [newAgentDetails, setNewAgentDetails] = useState<{id: string, url: string, key: string, name?: string, provider?: string, isNew?: boolean} | null>(null);
 
   const openIntegrationModal = (agent: Agent) => {
     setNewAgentDetails({
       id: agent.id,
       url: `https://api.checkpost.app/v1/${agent.id}/chat`,
       key: agent.proxy_api_key || 'Missing proxy key',
+      name: agent.name,
+      provider: agent.provider,
       isNew: false
     });
     setIsModalOpen(true);
@@ -178,12 +187,18 @@ export default function Page() {
           const agentBlocked = (dbData.queue || []).filter((q: any) => q.agentId === id);
           const totalCalls = agentTraces.length + agentBlocked.length;
 
+          // Prefer real provider-side limits if we have them (populated from API response headers)
           const policyId = info.policyId || 'default';
           const policy = dbData.policyProfiles?.[policyId] || dbData.policyProfiles?.['default'] || { maxTokens: 100000, maxSpend: 50 };
+          const hasRealProviderData = !!(info.providerTokenLimit && info.providerTokenLimit > 0);
+          const displayTokenLimit = hasRealProviderData ? info.providerTokenLimit : policy.maxTokens;
+          const displayTokensUsed = hasRealProviderData
+            ? (info.providerTokensUsedToday || info.totalTokens || 0)
+            : (info.totalTokens || 0);
 
-          const maxTokens = policy.maxTokens;
+          const maxTokens = displayTokenLimit;
           const maxSpend = policy.maxSpend;
-          const tokenProgress = Math.min(100, Math.round(((info.totalTokens || 0) / maxTokens) * 100));
+          const tokenProgress = Math.min(100, Math.round((displayTokensUsed / displayTokenLimit) * 100));
           const spendProgress = Math.min(100, Math.round(((info.totalSpend || 0) / maxSpend) * 100));
           let progress = Math.max(tokenProgress, spendProgress);
           
@@ -210,13 +225,19 @@ export default function Page() {
             status,
             calls: info.totalCalls || 0,
             lastCallAt: info.lastCallAt,
-            tokensUsed: info.totalTokens || 0,
+            tokensUsed: displayTokensUsed,
             totalSpend: info.totalSpend || 0,
-            maxTokens: maxTokens,
-            maxSpend: maxSpend,
+            maxTokens,
+            maxSpend,
             risk: info.blockedCount > 0 ? 'Medium' : 'Low',
             progress,
             proxy_api_key: info.proxy_api_key,
+            providerTokenLimit: info.providerTokenLimit,
+            providerTokensRemaining: info.providerTokensRemaining,
+            providerTokensUsedToday: info.providerTokensUsedToday,
+            providerLimitResetAt: info.providerLimitResetAt,
+            providerLimitUpdatedAt: info.providerLimitUpdatedAt,
+            hasRealProviderData,
           };
         });
       setAgents(localMapped.reverse());
@@ -281,6 +302,8 @@ export default function Page() {
         id: newId,
         url: `https://api.checkpost.app/v1/${newId}/chat`,
         key: proxy_api_key,
+        name: agentName,
+        provider: selectedPreset.provider,
         isNew: true
       });
       
@@ -502,31 +525,43 @@ export default function Page() {
                 {/* Token Usage Bar */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--app-muted)]">Token Usage</span>
-                    <span className="text-[10px] font-mono font-semibold text-[var(--app-ink)]">
-                      {agent.tokensUsed >= 1000
-                        ? `${(agent.tokensUsed / 1000).toFixed(1)}K`
-                        : agent.tokensUsed.toLocaleString()}
-                      {' / '}
-                      {agent.maxTokens >= 1000
-                        ? `${(agent.maxTokens / 1000).toFixed(0)}K`
-                        : agent.maxTokens.toLocaleString()}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--app-muted)]">Token Usage</span>
+                      {agent.hasRealProviderData && (
+                        <span className="inline-flex items-center gap-0.5 text-[8px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-1.5 py-0.5">
+                          <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                          Live
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="w-full h-1.5 rounded-full bg-black/[0.06] overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${
-                        agent.progress >= 100 ? 'bg-red-500' :
-                        agent.progress >= 80  ? 'bg-amber-500' :
-                        'bg-emerald-500'
-                      }`}
-                      style={{ width: `${Math.max(0, agent.progress)}%` }}
-                    />
-                  </div>
+                  {/* Token bar */}
+                  {[(() => {
+                    const isQuota = agent.status === 'Provider Quota' || agent.status === 'Rate Limited' || agent.status === 'Compromised';
+                    const isCritical = isQuota || agent.progress >= 100;
+                    const barFill = isQuota ? 100 : Math.max(agent.progress > 0 ? 4 : 0, agent.progress);
+                    const barGradient = isCritical ? 'linear-gradient(90deg,#f43f5e,#e11d48)' : 'linear-gradient(90deg,#10b981,#059669)';
+                    const barGlow = isCritical ? '0 0 10px rgba(244,63,94,0.45)' : '0 0 10px rgba(16,185,129,0.4)';
+                    return (
+                      <div key="bar" className="relative w-full h-5 rounded-lg overflow-hidden" style={{ background: 'rgba(0,0,0,0.06)' }}>
+                        <div className="absolute inset-y-0 left-0 rounded-lg transition-all duration-700" style={{ width: `${barFill}%`, background: barGradient, boxShadow: barGlow }} />
+                        <span className="absolute left-2 inset-y-0 flex items-center text-[9px] font-bold font-mono text-white z-10 pointer-events-none" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
+                          {agent.tokensUsed >= 1000 ? `${(agent.tokensUsed / 1000).toFixed(1)}K` : agent.tokensUsed.toLocaleString()}
+                        </span>
+                        <span className="absolute right-2 inset-y-0 flex items-center text-[9px] font-semibold font-mono text-[var(--app-muted)] z-10 pointer-events-none">
+                          {agent.maxTokens >= 1000000 ? `${(agent.maxTokens / 1000000).toFixed(1)}M` : agent.maxTokens >= 1000 ? `${(agent.maxTokens / 1000).toFixed(0)}K` : agent.maxTokens.toLocaleString()}{agent.hasRealProviderData ? '/d' : ''}
+                        </span>
+                      </div>
+                    );
+                  })()]}
                   <p className="text-[9px] text-[var(--app-muted)] mt-1 font-medium">
-                    {100 - agent.progress > 0
-                      ? `${100 - agent.progress}% remaining`
-                      : 'Limit reached'}
+                    {agent.status === 'Rate Limited'
+                      ? <span className="text-amber-500">Rate limited by provider</span>
+                      : agent.status === 'Provider Quota'
+                      ? <span className="text-red-500">Provider quota exhausted</span>
+                      : agent.progress >= 100 ? 'Limit reached'
+                      : agent.progress > 0 ? `${100 - agent.progress}% remaining${agent.hasRealProviderData && agent.providerLimitResetAt ? ` · resets ${new Date(agent.providerLimitResetAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}`
+                      : agent.hasRealProviderData ? 'No usage today' : 'No usage yet'}
                   </p>
                 </div>
               </div>
@@ -557,48 +592,68 @@ export default function Page() {
             </div>
 
             {newAgentDetails ? (
-              <div className="p-6 space-y-5 flex flex-col items-center">
-                <div className="w-16 h-16 bg-[var(--app-soft)] rounded-2xl shadow-sm border border-[var(--app-hairline)] flex items-center justify-center p-2 mb-2">
-                  <img src="/checkpost-icon.png" alt="Checkpost Logo" className="w-full h-full object-contain" />
-                </div>
-                <div className="text-center space-y-1 w-full">
-                  <h3 className="text-lg font-bold text-[var(--app-ink)] tracking-tight">
-                    {newAgentDetails.isNew ? 'Deployment Active' : 'Active Configuration'}
-                  </h3>
-                  <p className="text-xs text-[var(--app-muted)] leading-relaxed">
-                    {newAgentDetails.isNew ? 'Registered with Checkpost proxy.' : 'Use these details to connect to the Checkpost firewall proxy.'}
-                  </p>
+              <div className="p-6 space-y-6 flex flex-col">
+                <div className="flex items-start gap-4 pb-5 border-b border-[var(--app-hairline)]">
+                  {/* Provider Logo */}
+                  <div className="w-16 h-16 rounded-2xl bg-[var(--app-canvas)] border-2 border-[var(--app-hairline)] flex items-center justify-center p-3 shadow-sm shrink-0">
+                    <img 
+                      src={selectedPreset?.logo || guessLogo(newAgentDetails.provider || newAgentDetails.name || '').logo} 
+                      alt={newAgentDetails.provider} 
+                      className="w-full h-full object-contain" 
+                      onError={(e) => (e.currentTarget.style.display = 'none')} 
+                    />
+                  </div>
+                  
+                  {/* Agent Header Details */}
+                  <div className="flex-1 flex flex-col pt-1">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      {newAgentDetails.isNew && (
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Deployed Active
+                        </span>
+                      )}
+                      {newAgentDetails.provider && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)] bg-[var(--app-soft)] border border-[var(--app-hairline)] rounded-full px-2 py-0.5">
+                          {newAgentDetails.provider}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-[var(--app-ink)] tracking-tight leading-none mb-1">
+                      {newAgentDetails.name || 'Agent'}
+                    </h3>
+                    <p className="text-xs text-[var(--app-muted)] font-mono">{newAgentDetails.id}</p>
+                  </div>
                 </div>
                 
-                <div className="w-full flex flex-col gap-2">
-                  <div className="flex flex-col gap-1 p-3 rounded-lg border border-[var(--app-hairline)] bg-[var(--app-canvas)] shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Agent ID</span>
-                      <button onClick={() => navigator.clipboard.writeText(newAgentDetails.id)} className="text-[var(--app-muted)] hover:text-[var(--app-ink)] transition-colors"><Copy className="w-3.5 h-3.5" /></button>
+                {/* Credentials Section */}
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1.5 p-4 rounded-xl border border-[var(--app-hairline)] bg-[var(--app-soft)] hover:bg-[var(--app-canvas)] transition-colors group">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Proxy Endpoint URL</span>
+                      <button onClick={() => navigator.clipboard.writeText(newAgentDetails.url)} className="p-1.5 rounded-md text-[var(--app-muted)] hover:bg-[var(--app-ink)] hover:shadow-sm bg-[var(--app-canvas)] border border-[var(--app-hairline)] transition-all opacity-0 group-hover:opacity-100"><Copy className="w-3.5 h-3.5" /></button>
                     </div>
-                    <code className="text-[12px] font-mono text-[var(--app-ink)] truncate select-all">{newAgentDetails.id}</code>
+                    <code className="text-[13px] font-mono text-[var(--app-ink)] truncate select-all">{newAgentDetails.url}</code>
                   </div>
 
-                  <div className="flex flex-col gap-1 p-3 rounded-lg border border-[var(--app-hairline)] bg-[var(--app-canvas)] shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-muted)]">Proxy URL</span>
-                      <button onClick={() => navigator.clipboard.writeText(newAgentDetails.url)} className="text-[var(--app-muted)] hover:text-[var(--app-ink)] transition-colors"><Copy className="w-3.5 h-3.5" /></button>
+                  <div className="relative flex flex-col gap-1.5 p-4 rounded-xl border border-emerald-500/30 bg-emerald-50/30 overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/[0.03] to-teal-500/[0.03] pointer-events-none" />
+                    <div className="relative flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">API Key</span>
+                        <span className="text-[9px] font-semibold uppercase tracking-wider text-emerald-600/70 px-1.5 py-0.5 rounded-md bg-emerald-100/50">Store securely</span>
+                      </div>
+                      <button onClick={() => navigator.clipboard.writeText(newAgentDetails.key)} className="p-1.5 rounded-md text-emerald-700 hover:bg-emerald-100 hover:text-emerald-900 transition-all opacity-0 group-hover:opacity-100"><Copy className="w-3.5 h-3.5" /></button>
                     </div>
-                    <code className="text-[12px] font-mono text-[var(--app-ink)] truncate select-all">{newAgentDetails.url}</code>
-                  </div>
-
-                  <div className="flex flex-col gap-1 p-3 rounded-lg border-2 border-[var(--app-ink)] bg-[var(--app-canvas)] shadow-sm mt-1">
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--app-ink)]">API Key <span className="text-[var(--app-muted)] font-medium ml-1">(Store securely)</span></span>
-                      <button onClick={() => navigator.clipboard.writeText(newAgentDetails.key)} className="text-[var(--app-muted)] hover:text-[var(--app-ink)] transition-colors"><Copy className="w-3.5 h-3.5" /></button>
-                    </div>
-                    <code className="text-[13px] font-mono font-bold text-[var(--app-ink)] break-all select-all">{newAgentDetails.key}</code>
+                    <code className="relative text-[14px] font-mono font-bold text-[var(--app-ink)] break-all select-all">{newAgentDetails.key}</code>
                   </div>
                 </div>
 
-                <button onClick={closeModal} className="w-full cta-btn-dark text-on-dark shadow-md px-[16px] py-[10px] text-[13px] font-[600] rounded-xl transition-all hover:scale-[1.02]">
-                  Return to Dashboard
-                </button>
+                <div className="pt-2">
+                  <button onClick={closeModal} className="w-full cta-btn-dark text-on-dark shadow-lg shadow-black/5 px-[16px] py-[12px] text-[14px] font-[600] rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-xl">
+                    Return to Dashboard
+                  </button>
+                </div>
               </div>
             ) : (
             <form onSubmit={handleAddAgent} className="p-8 space-y-7 overflow-y-auto max-h-[75vh]">
