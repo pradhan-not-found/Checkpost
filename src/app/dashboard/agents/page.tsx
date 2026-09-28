@@ -184,6 +184,8 @@ export default function Page() {
             logo,
             status,
             calls: totalCalls.toString(),
+            tokensUsed: info.totalTokens || 0,
+            maxTokens: maxTokens,
             risk: info.blockedCount > 0 ? 'Medium' : 'Low',
             progress,
             proxy_api_key: info.proxy_api_key,
@@ -456,8 +458,8 @@ export default function Page() {
 
                 <div className="mb-4">
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-[var(--app-muted)] font-medium">Usage</span>
-                    <span className="text-[var(--app-ink)] font-semibold">{agent.calls} reqs</span>
+                    <span className="text-[var(--app-muted)] font-medium">Token Usage</span>
+                    <span className="text-[var(--app-ink)] font-semibold">{agent.tokensUsed >= agent.maxTokens ? 'Quota Exhausted' : `${agent.tokensUsed.toLocaleString()} / ${agent.maxTokens.toLocaleString()}`}</span>
                   </div>
                   <div className="w-full bg-[var(--app-hairline)] rounded-full h-1.5 overflow-hidden">
                     <div
