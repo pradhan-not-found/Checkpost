@@ -9,6 +9,7 @@ import { MotionCard } from '@/components/MotionCard';
 import { useAuth } from '@/context/AuthContext';
 import { Diamond } from '@/components/Diamond';
 import { useDatabase } from '@/context/DatabaseContext';
+import { guessLogo } from '@/lib/guessLogo';
 
 // ─── Icon system ──────────────────────────────────────────────────────────────
 const ICON_MAP: Record<string, { el: React.ReactNode; bg: string; fg: string }> = {
@@ -103,39 +104,7 @@ type PolicyProfile = {
   rules: string[];
 };
 
-function getAgentLogo(name: string) {
-  const n = name.toLowerCase();
-  if (n.includes('groq')) return '/ai-logos/groq.png';
-  if (n.includes('gpt') || n.includes('openai') || n.includes(' o1') || n.includes(' o3')) return '/ai-logos/openai.svg';
-  if (n.includes('claude code') || n.includes('claudecode')) return '/ai-logos/claudecode.png';
-  if (n.includes('claude') || n.includes('anthropic') || n.includes('sonnet') || n.includes('opus') || n.includes('haiku')) return '/ai-logos/claude.png';
-  if (n.includes('gemini') || n.includes('google')) return '/ai-logos/gemini.svg';
-  if (n.includes('gemma')) return '/ai-logos/gemma.png';
-  if (n.includes('llama') || n.includes('meta')) return '/ai-logos/meta.svg';
-  if (n.includes('mistral') || n.includes('mixtral')) return '/ai-logos/mistral.svg';
-  if (n.includes('deepseek')) return '/ai-logos/deepseek.svg';
-  if (n.includes('xai') || n.includes('grok')) return '/ai-logos/xai.svg';
-  if (n.includes('perplexity') || n.includes('sonar')) return '/ai-logos/perplexity.svg';
-  if (n.includes('qwen') || n.includes('alibaba')) return '/ai-logos/qwen.svg';
-  if (n.includes('kimi') || n.includes('moonshot')) return '/ai-logos/kimi.png';
-  if (n.includes('ollama')) return '/ai-logos/ollama.svg';
-  if (n.includes('huggingface') || n.includes('hf')) return '/ai-logos/huggingface.svg';
-  if (n.includes('cursor')) return '/ai-logos/cursor.svg';
-  if (n.includes('github') || n.includes('copilot')) return '/ai-logos/github.svg';
-  if (n.includes('amp')) return '/ai-logos/amp-logo.svg';
-  if (n.includes('antigravity')) return '/ai-logos/antigravity.svg';
-  if (n.includes('factory')) return '/ai-logos/factory.png';
-  if (n.includes('hermes') || n.includes('nous')) return '/ai-logos/hermes.png';
-  if (n.includes('kilo')) return '/ai-logos/kilo.png';
-  if (n.includes('maincode')) return '/ai-logos/maincode.png';
-  if (n.includes('openclaw')) return '/ai-logos/openclaw.jpeg';
-  if (n.includes('opencode')) return '/ai-logos/opencode.svg';
-  if (n.includes('cohere') || n.includes('command r')) return '/ai-logos/cohere.svg';
-  if (n.includes('aws') || n.includes('bedrock')) return '/ai-logos/aws.svg';
-  if (n.includes('azure')) return '/ai-logos/azure.svg';
-  if (n.includes('replicate')) return '/ai-logos/replicate.svg';
-  return '/ai-logos/openai.svg';
-}
+
 
 export default function PoliciesPage() {
   const { user } = useAuth();
@@ -341,7 +310,7 @@ export default function PoliciesPage() {
                   <span className="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)]">Assigned Agents</span>
                   <div className="flex items-center -space-x-1.5">
                     {pAgents.slice(0, 3).map((a, i) => {
-                      const logoUrl = agentMetas[a.id]?.logo || getAgentLogo(a.name);
+                      const logoUrl = agentMetas[a.id]?.logo || guessLogo(a.provider || a.name).logo;
                       return (
                         <div key={a.id} className="relative z-10 w-7 h-7 rounded-full border-[1.5px] border-white bg-white overflow-hidden shadow-sm" style={{ zIndex: 10 - i }} title={a.name}>
                           <img src={logoUrl} alt={a.name} className="w-full h-full object-cover" />
