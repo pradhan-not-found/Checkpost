@@ -62,6 +62,46 @@ export async function POST(req: Request) {
       }, { status: 403 });
     }
 
+    // 2. FIREWALL RULES CHECK
+    let blockedReason = null;
+    if (policy.rules && Array.isArray(policy.rules)) {
+      const promptLower = prompt.toLowerCase();
+      
+      if (policy.rules.includes('Prompt Injection Guard')) {
+        if (promptLower.includes('ignore previous') || promptLower.includes('jailbreak') || promptLower.includes('dan mode')) {
+          blockedReason = 'Prompt Injection Guard';
+        }
+      }
+      
+      if (!blockedReason && policy.rules.includes('Block PII Exfiltration')) {
+        const ssnRegex = /\b\d{3}-\d{2}-\d{4}\b/;
+        const ccRegex = /\b(?:\d{4}[ -]?){3}\d{4}\b/;
+        if (ssnRegex.test(prompt) || ccRegex.test(prompt)) {
+          blockedReason = 'PII Exfiltration (SSN/CC detected)';
+        }
+      }
+    }
+
+    if (blockedReason) {
+      const queueItem = {
+        id: crypto.randomUUID(),
+        agentId,
+        agentName: agent.name,
+        action: 'execute_prompt',
+        policy: blockedReason,
+        time: new Date().toISOString(),
+        prompt
+      };
+      db.queue.unshift(queueItem);
+      await saveDb(db);
+      await incrementAgentBlocked(agentId);
+
+      return NextResponse.json({ 
+        status: 'blocked', 
+        error: `Agent blocked by Checkpost Firewall. Policy triggered: ${blockedReason}` 
+      }, { status: 403 });
+    }
+
     // 2. ALLOWED - EXECUTE
     const startTime = Date.now();
     let text = '';
