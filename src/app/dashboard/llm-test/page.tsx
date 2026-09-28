@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Send, Bot, Zap, ChevronDown } from 'lucide-react';
+import { Send, Bot, Zap, ChevronDown, ShieldAlert } from 'lucide-react';
 import { MotionCard } from '@/components/MotionCard';
 import { useAuth } from '@/context/AuthContext';
 import { useDatabase } from '@/context/DatabaseContext';
@@ -159,17 +159,17 @@ export default function LLMTestPage() {
         </form>
 
         {error && (
-          <div className="mt-6 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-xl flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center shrink-0">
-              <img src="/checkpost-icon.png" alt="Blocked Icon" className="w-4 h-4 object-contain" />
+          <div className="mt-6 overflow-hidden rounded-xl bg-red-500/10 border border-red-500/20 flex flex-col">
+            <div className="px-5 py-3 border-b border-red-500/20 bg-red-500/10 flex items-center gap-3">
+              <ShieldAlert className="w-5 h-5 text-red-500 shrink-0" />
+              <span className="text-sm font-bold text-red-600 dark:text-red-400 tracking-wide uppercase">
+                Execution Blocked
+              </span>
             </div>
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="text-sm font-semibold text-red-800 dark:text-red-300">Execution Blocked</span>
-              <div className="mt-2 p-3 bg-red-100/50 dark:bg-red-900/30 rounded-lg border border-red-200/50 dark:border-red-800/50">
-                <span className="text-xs text-red-700 dark:text-red-400 font-mono leading-relaxed break-words whitespace-pre-wrap block max-h-64 overflow-y-auto">
-                  {error}
-                </span>
-              </div>
+            <div className="p-5">
+              <span className="text-sm text-red-900 dark:text-red-200 font-mono leading-relaxed break-words whitespace-pre-wrap block max-h-64 overflow-y-auto">
+                {error}
+              </span>
             </div>
           </div>
         )}
