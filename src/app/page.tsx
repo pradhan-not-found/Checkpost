@@ -2264,7 +2264,7 @@ export default function LandingPage() {
                       </span>
                       <span className="m-0 text-[15px] font-[460] leading-[140%] tracking-[0.15px]">
                         <a
-                          href="https://github.com/pradhan-not-found/vibeforge-project"
+                          href="https://github.com/pradhan-not-found/Checkpost"
                           className="footer-link text-ink no-underline"
                         >
                           Careers
@@ -2282,7 +2282,7 @@ export default function LandingPage() {
                       </span>
                       <span className="m-0 text-[15px] font-[460] leading-[140%] tracking-[0.15px]">
                         <a
-                          href="https://github.com/pradhan-not-found/vibeforge-project/blob/main/LICENSE"
+                          href="https://github.com/pradhan-not-found/Checkpost/blob/main/LICENSE"
                           className="footer-link text-ink no-underline"
                         >
                           Terms of Service
@@ -2290,7 +2290,7 @@ export default function LandingPage() {
                       </span>
                       <span className="m-0 text-[15px] font-[460] leading-[140%] tracking-[0.15px]">
                         <a
-                          href="https://github.com/pradhan-not-found/vibeforge-project#readme"
+                          href="https://github.com/pradhan-not-found/Checkpost#readme"
                           className="footer-link text-ink no-underline"
                         >
                           Docs
@@ -2305,7 +2305,7 @@ export default function LandingPage() {
                     aria-label="X"
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="https://github.com/pradhan-not-found/vibeforge-project"
+                    href="https://github.com/pradhan-not-found/Checkpost"
                   >
                     <span className="relative z-10 inline-flex items-center justify-center gap-[6px]">
                       <svg
@@ -2376,7 +2376,7 @@ export default function LandingPage() {
                     aria-label="LinkedIn"
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="https://github.com/pradhan-not-found/vibeforge-project"
+                    href="https://github.com/pradhan-not-found/Checkpost"
                   >
                     <span className="relative z-10 inline-flex items-center justify-center gap-[6px]">
                       <svg
