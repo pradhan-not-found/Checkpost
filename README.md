@@ -141,7 +141,6 @@ flowchart TD
 
 ## <img src="https://api.iconify.design/lucide/bar-chart-3.svg?color=white" width="24" height="24" align="absmiddle" /> Impact
 
-> **10,650+ AI agents** are currently secured by Checkpost.
 
 Checkpost provides enterprises with a real-time financial control layer purpose-built for the agentic AI era — closing a gap that traditional fintech security tools were never designed to cover.
 
